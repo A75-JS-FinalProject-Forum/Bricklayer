@@ -1,14 +1,14 @@
-// import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 function MostDiscussed() {
-  // const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState([]);
 
-  // useEffect(() => {
-  //   setPosts([
-  //     { id: 1, title: 'City Diorama', comments: 24 },
-  //     { id: 2, title: 'Technic Crane', comments: 19 }
-  //   ]);
-  // }, []);
+  useEffect(() => {
+    setPosts([
+      { id: 1, title: 'City Diorama', comments: 24 },
+      { id: 2, title: 'Technic Crane', comments: 19 }
+    ]);
+  }, []);
 
   return (
     <section>

@@ -3,43 +3,43 @@ import NavBar from './NavBar';
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
 import HomePage from './pages/HomePage';
 
+const Register = ({ onLogin }) => (
+  <div>
+    <h2>Register Page</h2>
+    <button onClick={() => onLogin('new@user.com')}>Register</button>
+  </div>
+);
+
+const Feed = () => (
+  <div>
+    <h2>Feed</h2>
+    <p>Welcome to the forum.</p>
+  </div>
+);
+
+const CreatePost = () => (
+  <div>
+    <h2>Create a New Post</h2>
+    <p>This page is protected.</p>
+  </div>
+);
+
+const Login = ({ onLogin }) => (
+  <div>
+    <h2>Login Page</h2>
+    <button onClick={() => onLogin('test@user.com')}>Simulate Login</button>
+  </div>
+);
+
+const Profile = ({ email }) => (
+  <div>
+    <h2>User Profile</h2>
+    <p>Logged in as: {email}</p>
+  </div>
+);
+
 function App() {
   const [user, setUser] = useState(null);
-
-  const Register = ({ onLogin }) => (
-    <div>
-      <h2>Register Page</h2>
-      <button onClick={() => onLogin('new@user.com')}>Register</button>
-    </div>
-  );
-
-  const Feed = () => (
-    <div>
-      <h2>Feed</h2>
-      <p>Welcome to the forum.</p>
-    </div>
-  ); 
-  
-  const CreatePost = () => (
-    <div>
-      <h2>Create a New Post</h2>
-      <p>This page is protected.</p>
-    </div>
-  ); 
-  
-  const Login = ({ onLogin }) => (
-    <div>
-      <h2>Login Page</h2>
-      <button onClick={() => onLogin('test@user.com')}>Simulate Login</button>
-    </div>
-  ); 
-  
-  const Profile = ({ email }) => (
-    <div>
-      <h2>User Profile</h2>
-      <p>Logged in as: {email}</p>
-    </div>
-  );
 
   return (
     <BrowserRouter>

@@ -30,7 +30,7 @@ function LatestPosts() {
 
   return (
     <section>
-      <h2>Featured Builds</h2>
+      <h2>Latest Builds</h2>
       <ul>
         {posts.map(p => (
           <li key={p.id}>
