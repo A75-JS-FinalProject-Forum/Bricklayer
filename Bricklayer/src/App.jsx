@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import NavBar from './NavBar';
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
+import HomePage from './pages/HomePage';
+
 function App() {
   const [user, setUser] = useState(null);
 
@@ -44,7 +46,7 @@ function App() {
       <NavBar user={user} onLogout={() => setUser(null)} />
 
       <Routes>
-        <Route path="/" element={<Feed />} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/login" element={user ? <Navigate to="/" /> : <Login onLogin={setUser} />} />
         <Route path="/register" element={user ? <Navigate to="/" /> : <Register onLogin={setUser} />} />
         <Route path="/create" element={user ? <CreatePost /> : <Navigate to="/login" />} />
