@@ -1,14 +1,10 @@
 import { useState } from 'react'
-import NavBar from './NavBar';
+import NavBar from './NavBar'
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
-import HomePage from './pages/HomePage';
-
-const Register = ({ onLogin }) => (
-  <div>
-    <h2>Register Page</h2>
-    <button onClick={() => onLogin('new@user.com')}>Register</button>
-  </div>
-);
+import HomePage from './pages/HomePage'
+import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
+import { AuthProvider } from './context/AuthContext'
 
 const Feed = () => (
   <div>
@@ -24,13 +20,6 @@ const CreatePost = () => (
   </div>
 );
 
-const Login = ({ onLogin }) => (
-  <div>
-    <h2>Login Page</h2>
-    <button onClick={() => onLogin('test@user.com')}>Simulate Login</button>
-  </div>
-);
-
 const Profile = ({ email }) => (
   <div>
     <h2>User Profile</h2>
@@ -42,18 +31,20 @@ function App() {
   const [user, setUser] = useState(null);
 
   return (
-    <BrowserRouter>
-      <NavBar user={user} onLogout={() => setUser(null)} />
+    <AuthProvider>
+        <BrowserRouter>
+        <NavBar user={user} onLogout={() => setUser(null)} />
 
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={user ? <Navigate to="/" /> : <Login onLogin={setUser} />} />
-        <Route path="/register" element={user ? <Navigate to="/" /> : <Register onLogin={setUser} />} />
-        <Route path="/create" element={user ? <CreatePost /> : <Navigate to="/login" />} />
-        <Route path="/profile" element={user ? <Profile user={user} /> : <Navigate to="/login" />} />
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
-    </BrowserRouter>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={user ? <Navigate to="/" /> : <LoginPage onLogin={setUser} />} />
+          <Route path="/register" element={user ? <Navigate to="/" /> : <RegisterPage onLogin={setUser} />} />
+          <Route path="/create" element={user ? <CreatePost /> : <Navigate to="/login" />} />
+          <Route path="/profile" element={user ? <Profile user={user} /> : <Navigate to="/login" />} />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
