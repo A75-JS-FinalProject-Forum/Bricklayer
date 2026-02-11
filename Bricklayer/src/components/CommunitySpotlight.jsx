@@ -25,3 +25,6 @@ function CommunitySpotlight() {
 }
 
 export default CommunitySpotlight;
+
+// { id: 1, username: 'brickmaster', reputation: 120 },
+      // { id: 2, username: 'mocbuilder', reputation: 95 }
