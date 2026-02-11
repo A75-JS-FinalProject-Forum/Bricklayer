@@ -1,22 +1,29 @@
 import { useEffect, useState } from 'react';
+import { supabase } from '../supabaseClient';
 
 function MostDiscussed() {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    setPosts([
-      { id: 1, title: 'City Diorama', comments: 24 },
-      { id: 2, title: 'Technic Crane', comments: 19 }
-    ]);
+    const fetchTop = async () => {
+      const { data } = await supabase
+        .from('posts')
+        .select('id, title, comments_count')
+        .order('comments_count', {ascending: false})
+        .limit(10);
+
+        setPosts(data ?? []);
+    }
+    fetchTop();
   }, []);
 
   return (
     <section>
-      <h2>Most Discussed</h2>
+      <h2>Top 10 Most Discussed</h2>
       <ul>
         {posts.map(p => (
           <li key={p.id}>
-            {p.title} ({p.comments} comments)
+            {p.comments_count} comments
           </li>
         ))}
       </ul>
@@ -25,6 +32,3 @@ function MostDiscussed() {
 }
 
 export default MostDiscussed;
-
-// { id: 1, title: 'City Diorama', comments: 24 },
-      // { id: 2, title: 'Technic Crane', comments: 19 }
