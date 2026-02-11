@@ -1,28 +1,37 @@
 import { useEffect, useState } from 'react';
+import { supabase } from '../supabaseClient';
 
 function LatestPosts() {
+
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+    const fetchLatest = async () => {
+      const { data, error } = await supabase
+        .from(posts)
+        .select(`
+          id,
+          title,
+          created_at,
+          author:profiles(username)
+          `)
+        //.eq('is_deleted', false)
+        .order('created_at', { ascending: false }
+          .limit(10)
+        );
 
-        const data = [
-          { id: 1, title: 'New Space Station Build' },
-          { id: 2, title: 'Medieval Tower' }
-        ];
-
+      if (error) {
+        console.error(error);
+      } else {
         setPosts(data);
-      } catch (error) {
-        console.error("error loading:", error);
-      } finally {
-        setLoading(false);
       }
+
+      setLoading(false);
     };
 
-    fetchPosts();
-  }, []);
+    fetchLatest();
+  }, [posts]);
 
   if (loading) {
     return <section><h2>Loading models...</h2></section>;
@@ -30,11 +39,15 @@ function LatestPosts() {
 
   return (
     <section>
-      <h2>Latest Builds</h2>
+      <h2>Latest Posts</h2>
       <ul>
         {posts.map(p => (
           <li key={p.id}>
             <span>{p.title}{p.likes}</span>
+            <small>
+              by {p.author?.username} –{' '}
+              {new Date(p.created_at).toLocaleDateString()}
+            </small>
           </li>
         ))}
       </ul>

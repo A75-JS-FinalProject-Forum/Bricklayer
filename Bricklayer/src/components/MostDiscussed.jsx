@@ -25,3 +25,6 @@ function MostDiscussed() {
 }
 
 export default MostDiscussed;
+
+// { id: 1, title: 'City Diorama', comments: 24 },
+      // { id: 2, title: 'Technic Crane', comments: 19 }
