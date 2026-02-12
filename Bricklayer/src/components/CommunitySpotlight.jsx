@@ -1,30 +1,67 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'
+import { supabase } from '../supabaseClient'
+import { Link } from 'react-router-dom'
 
-function CommunitySpotlight() {
-  const [users, setUsers] = useState([]);
+export default function CommunitySpotlight() {
+  const [users, setUsers] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
-    setUsers([
-      { id: 1, username: 'brickmaster', reputation: 120 },
-      { id: 2, username: 'mocbuilder', reputation: 95 }
-    ]);
-  }, []);
+    const fetchTopUsers = async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, username, avatar_url, reputation')
+        .order('reputation', { ascending: false })
+        .limit(5)
+
+      if (error) {
+        setError(error.message)
+      } else {
+        setUsers(data)
+      }
+
+      setLoading(false)
+    }
+
+    fetchTopUsers()
+  }, [])
+
+  if (loading) {
+    return <div>Loading spotlight...</div>
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>
+  }
 
   return (
-    <section>
-      <h2>Top Builders</h2>
+    <div className="community-spotlight">
+      <h2>Community Spotlight</h2>
+
       <ul>
-        {users.map(u => (
-          <li key={u.id}>
-            {u.username} (rep: {u.reputation})
+        {users.map((user, index) => (
+          <li key={user.id} className="spotlight-user">
+            <span className="rank">#{index + 1}</span>
+
+            <Link to={`/profile/${user.username}`}>
+              <img
+                src={user.avatar_url || '/default-avatar.png'}
+                alt={user.username}
+                width={40}
+                height={40}
+              />
+            </Link>
+
+            <div>
+              <Link to={`/profile/${user.username}`}>
+                <strong>{user.username}</strong>
+              </Link>
+              <p>{user.reputation} reputation</p>
+            </div>
           </li>
         ))}
       </ul>
-    </section>
-  );
+    </div>
+  )
 }
-
-export default CommunitySpotlight;
-
-// { id: 1, username: 'brickmaster', reputation: 120 },
-      // { id: 2, username: 'mocbuilder', reputation: 95 }
