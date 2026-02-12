@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
+import CategoryPage from './pages/CategoryPage'
 import { AuthProvider } from './context/AuthContext'
 
 const Feed = () => (

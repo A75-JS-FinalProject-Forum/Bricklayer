@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '../supabaseClient';
+import { supabase } from '../lib/supabase'
 
 function LatestPosts() {
 
@@ -9,17 +9,17 @@ function LatestPosts() {
   useEffect(() => {
     const fetchLatest = async () => {
       const { data, error } = await supabase
-        .from(posts)
+        .from('posts')
         .select(`
           id,
           title,
           created_at,
-          author:profiles(username)
-          `)
+          author:profiles!posts_author_id_fkey(username)
+        `)
         //.eq('is_deleted', false)
-        .order('created_at', { ascending: false }
-          .limit(10)
-        );
+        .order('created_at', { ascending: false })
+        .limit(10)
+        ;
 
       if (error) {
         console.error(error);
