@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(copy \"C:\\\\repos\\\\Bricklayer\\\\.env\" \"C:\\\\repos\\\\Bricklayer\\\\Bricklayer\\\\.env\")"
+    ]
+  }
+}
