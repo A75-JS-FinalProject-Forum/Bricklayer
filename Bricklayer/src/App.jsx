@@ -41,6 +41,7 @@ function App() {
           <Route path="/register" element={user ? <Navigate to="/" /> : <RegisterPage onLogin={setUser} />} />
           <Route path="/create" element={user ? <CreatePost /> : <Navigate to="/login" />} />
           <Route path="/profile" element={user ? <Profile user={user} /> : <Navigate to="/login" />} />
+          <Route path="/category/:slug" element={<CategoryPage />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </BrowserRouter>
