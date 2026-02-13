@@ -99,8 +99,6 @@ export default function PostDetail() {
         return <div>{error || 'Post not found'}</div>
     }
 
-
-
     return (
         <div>
             <h2>{post.title}</h2>
