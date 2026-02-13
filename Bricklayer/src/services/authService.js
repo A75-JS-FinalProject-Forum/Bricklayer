@@ -1,7 +1,7 @@
 import { supabase } from '../lib/supabase.js';
 
 export const authService = {
-    async signUp({ email, password, username }) {
+    async signUp({ email, password, username, firstName, lastName }) {
         const { data: existing } = await supabase
             .from('profiles')
             .select('username')
@@ -16,11 +16,15 @@ export const authService = {
             email,
             password,
             options: {
-                data: { username },
+                data: { username,
+                    first_name: firstName,
+                    last_name: lastName
+                 },
             },
         });
 
         if (error) throw error;
+        console.log("User registered successfully")
         return data;
     },
 
