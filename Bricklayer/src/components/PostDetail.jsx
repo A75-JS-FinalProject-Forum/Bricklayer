@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../supabaseClient'
-import { getPostById } from '../services/postService'
+import { getPostById, updatePost } from '../services/postService'
 import CommentNode from './CommentNode'
 import { buildCommentTree } from '../utils/commentTree'
 import { deletePost } from '../services/postService'
@@ -12,6 +12,11 @@ export default function PostDetail() {
     const navigate = useNavigate();
     const [deleting, setDeleting] = useState(false);
     const [deleteError, setDeleteError] = useState(null);
+    const [editing, setEditing] = useState(false);
+    const [editTitle, setEditTitle] = useState('');
+    const [editContent, setEditContent] = useState('');
+    const [editError, setEditError] = useState(null);
+    const [editSuccess, setEditSuccess] = useState(null);
 
     const [post, setPost] = useState(null);
     const [comments, setComments] = useState([]);
@@ -90,6 +95,40 @@ export default function PostDetail() {
         return <div>{error || 'Post not found'}</div>
     }
 
+    const isAuthor = user && post.profiles?.username === user.user_metadata?.username;
+
+    const handleEdit = () => {
+        setEditTitle(post.title);
+        setEditContent(post.content);
+        setEditError(null);
+        setEditSuccess(null);
+        setEditing(true);
+    };
+
+    const handleEditCancel = () => {
+        setEditing(false);
+        setEditError(null);
+        setEditSuccess(null);
+    };
+
+    const handleEditSubmit = async (e) => {
+        e.preventDefault();
+        setEditError(null);
+        setEditSuccess(null);
+        if (!editTitle.trim() || !editContent.trim()) {
+            setEditError('Title and content are required.');
+            return;
+        }
+        try {
+            const updated = await updatePost(id, { title: editTitle, content: editContent });
+            setPost({ ...post, ...updated });
+            setEditSuccess('Post updated successfully.');
+            setEditing(false);
+        } catch (err) {
+            setEditError(err.message || 'Failed to update post.');
+        }
+    };
+
     const handleDelete = async () => {
         
         if (!window.confirm('Are you sure you want to delete this post?')) {
@@ -111,21 +150,59 @@ export default function PostDetail() {
 
     return (
         <div>
-            <h2>{post.title}</h2>
-            <p>by {post.profiles?.username || 'Unknown author'}</p>
-            <p>{post.content}</p>
-            <p>⭐ {post.score}</p>
-            {/* Show delete button only if user is author */}
-            {user && post.profiles?.username === user.user_metadata?.username && (
-                <button
-                    onClick={handleDelete}
-                    disabled={deleting}
-                    style={{ marginTop: 16, background: 'red', color: 'white', padding: '8px 16px', border: 'none', borderRadius: 4 }}
-                >
-                    {deleting ? 'Deleting...' : 'Delete Post'}
-                </button>
+            {editing ? (
+                <form onSubmit={handleEditSubmit} style={{ marginBottom: 24 }}>
+                    <h2>Edit Post</h2>
+                    <div>
+                        <label>Title</label><br />
+                        <input
+                            type="text"
+                            value={editTitle}
+                            onChange={e => setEditTitle(e.target.value)}
+                            style={{ width: '100%', padding: 8 }}
+                        />
+                    </div>
+                    <div style={{ marginTop: 12 }}>
+                        <label>Content</label><br />
+                        <textarea
+                            value={editContent}
+                            onChange={e => setEditContent(e.target.value)}
+                            rows={6}
+                            style={{ width: '100%', padding: 8 }}
+                        />
+                    </div>
+                    {editError && <div style={{ color: 'red', marginTop: 8 }}>{editError}</div>}
+                    {editSuccess && <div style={{ color: 'green', marginTop: 8 }}>{editSuccess}</div>}
+                    <button type="submit" style={{ marginTop: 16, marginRight: 8 }}>Save</button>
+                    <button type="button" onClick={handleEditCancel} style={{ marginTop: 16 }}>Cancel</button>
+                </form>
+            ) : (
+                <>
+                    <h2>{post.title}</h2>
+                    <p>by {post.profiles?.username || 'Unknown author'}</p>
+                    <p>{post.content}</p>
+                    <p>⭐ {post.score}</p>
+                    {/* Show edit/delete buttons only if user is author */}
+                    {isAuthor && (
+                        <>
+                            <button
+                                onClick={handleEdit}
+                                style={{ marginTop: 16, marginRight: 8, background: 'orange', color: 'white', padding: '8px 16px', border: 'none', borderRadius: 4 }}
+                            >
+                                Edit Post
+                            </button>
+                            <button
+                                onClick={handleDelete}
+                                disabled={deleting}
+                                style={{ marginTop: 16, background: 'red', color: 'white', padding: '8px 16px', border: 'none', borderRadius: 4 }}
+                            >
+                                {deleting ? 'Deleting...' : 'Delete Post'}
+                            </button>
+                        </>
+                    )}
+                    {deleteError && <div style={{ color: 'red', marginTop: 8 }}>{deleteError}</div>}
+                </>
             )}
-            {deleteError && <div style={{ color: 'red', marginTop: 8 }}>{deleteError}</div>}
             <hr />
             <h3>Comments</h3>
             {commentsLoading ? (
