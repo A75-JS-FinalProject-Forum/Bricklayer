@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import CategoryPage from './pages/CategoryPage'
 import { AuthProvider } from './context/AuthContext'
+import CreatePost from './pages/CreatePost'
 
 const Feed = () => (
   <div>
@@ -14,12 +15,7 @@ const Feed = () => (
   </div>
 );
 
-const CreatePost = () => (
-  <div>
-    <h2>Create a New Post</h2>
-    <p>This page is protected.</p>
-  </div>
-);
+// ...existing code...
 
 const Profile = ({ email }) => (
   <div>
