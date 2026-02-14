@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { supabase } from '../supabaseClient'
+import { getPosts } from '../services/postService'
 import PostCard from './PostCard'
 
 export default function PostList() {
@@ -12,22 +12,8 @@ export default function PostList() {
             setLoading(true);
             setError(null);
             try {
-                const { data, error: postsError } = await supabase
-                    .from('posts')
-                    .select(`
-                        id,
-                        title,
-                        score,
-                        comments_count,
-                        created_at,
-                        profiles (username),
-                        categories (name, slug)
-                    `)
-                    .eq('is_deleted', false)
-                    .order('created_at', { ascending: false })
-                    .limit(20);
-                if (postsError) throw postsError;
-                setPosts(data || []);
+                const posts = await getPosts();
+                setPosts(posts || []);
             } catch {
                 setError('Failed to load posts.');
                 setPosts([]);

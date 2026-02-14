@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../supabaseClient'
+import { getPostById } from '../services/postService'
 import CommentNode from './CommentNode'
 import { buildCommentTree } from '../utils/commentTree'
 import { deletePost } from '../services/postService'
@@ -39,20 +40,7 @@ export default function PostDetail() {
             setLoading(true);
             setError(null);
             try {
-                const { data: postData, error: postError } = await supabase
-                    .from('posts')
-                    .select(`
-                        id,
-                        title,
-                        content,
-                        score,
-                        created_at,
-                        profiles (username)
-                    `)
-                    .eq('id', id)
-                    .eq('is_deleted', false)
-                    .single();
-                if (postError) throw postError;
+                const postData = await getPostById(id);
                 setPost(postData);
             } catch {
                 setError('Failed to load post.');
