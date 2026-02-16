@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom';
+import { useAuth } from './context/useAuth';
 
-export default function NavBar({ user, onLogout }) {
+export default function NavBar() {
+    const {user, logout} = useAuth()
+    
     return (
         <nav>
             <strong>The BrickLayer</strong>
@@ -15,7 +18,7 @@ export default function NavBar({ user, onLogout }) {
                     <span> | </span>
                     <Link to="/profile">Profile</Link>
                     <span> | </span>
-                    <button onClick={onLogout}>Logout</button>
+                    <button onClick={logout}>Logout</button>
                 </>
             ) : (
                 <>
