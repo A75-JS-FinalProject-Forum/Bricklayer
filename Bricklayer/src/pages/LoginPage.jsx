@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useAuth } from '../context/useAuth.js';
+import { useAuth } from '../context/useAuth';
 import { useNavigate, Link } from 'react-router-dom';
 
 export default function Login() {
@@ -9,24 +9,39 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
     try {
-      const { error } = await login(email, password);
-      if (error) throw error;
+      const result = await login(email, password);
+
+      if (result?.error) {
+        if (result.error.message === 'Email not confirmed') {
+          throw new Error('Please confirm your email');
+        }
+        throw result.error;
+      }
+      
       navigate('/'); 
     } catch (err) {
-      setError('Wrong password or email');
-      console.error(err);
+      const ErrMsg = err.message === 'Invalid login credentials' 
+        ? 'Wrong email or password ' 
+        : err.message;
+        
+      setError(ErrMsg);
+      console.error("Details on input data:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div>
-      <h2>Вход</h2>
+      <h2>Enter</h2>
       {error && <p>{error}</p>}
       
       <form onSubmit={handleSubmit}>
@@ -44,7 +59,7 @@ export default function Login() {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit">Login</button>
+        <button type="submit" disabled={loading}>Login</button>
       </form>
       
       <p>Don't have a profile? <Link to="/register">Create one</Link></p>
