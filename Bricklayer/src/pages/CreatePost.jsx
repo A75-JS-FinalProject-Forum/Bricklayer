@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { createPost } from '../services/postService';
 import { AuthContext } from '../context/AuthContext';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function CreatePost() {
 
@@ -53,6 +54,8 @@ export default function CreatePost() {
   return (
     <div style={{ maxWidth: 600, margin: '0 auto' }}>
       
+      <div><Toaster/></div>
+
       <h2>Create New Post</h2>
       <form onSubmit={handleSubmit}>
         <div>
@@ -76,7 +79,7 @@ export default function CreatePost() {
             style={{ width: '100%', padding: 8 }}
           />
         </div>
-        {error && <div style={{ color: 'red', marginTop: 8 }}>{error}</div>}
+        {error && <div style={{ color: 'red', marginTop: 8 }}>{error} {toast("Тухличката е поставена успешно! 🧱")}</div>}
         <button type="submit" disabled={loading} style={{ marginTop: 16 }}>
           {loading ? 'Creating...' : 'Create Post'}
         </button>
