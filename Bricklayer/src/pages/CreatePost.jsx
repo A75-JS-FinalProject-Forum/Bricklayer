@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { createPost } from '../services/postService';
+import { AuthContext } from '../context/AuthContext';
 
 export default function CreatePost() {
+
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [error, setError] = useState(null);
@@ -10,24 +13,35 @@ export default function CreatePost() {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
+
     e.preventDefault();
     setLoading(true);
     setError(null);
+
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      
+      const { data: { user } } = await supabase.auth.getUser(); // TODO: how to get AuthContext?
+      
       if (!user) {
+
         setError('You must be logged in to create a post.');
         setLoading(false);
         return;
+
       }
-      const { error: postError } = await supabase.from('posts').insert([
+
+      const { error: postError } = createPost([
         {
           title,
           content,
           user_id: user.id,
         }
       ]);
-      if (postError) throw postError;
+
+      if (postError) {
+        throw postError;
+      }
+
       navigate('/'); // Redirect to home or posts page
     } catch (err) {
       setError(err.message || 'Failed to create post.');
@@ -38,6 +52,7 @@ export default function CreatePost() {
 
   return (
     <div style={{ maxWidth: 600, margin: '0 auto' }}>
+      
       <h2>Create New Post</h2>
       <form onSubmit={handleSubmit}>
         <div>
@@ -45,7 +60,8 @@ export default function CreatePost() {
           <input
             type="text"
             value={title}
-            onChange={e => setTitle(e.target.value)}
+            onChange= {e => 
+                setTitle(e.target.value)}
             required
             style={{ width: '100%', padding: 8 }}
           />

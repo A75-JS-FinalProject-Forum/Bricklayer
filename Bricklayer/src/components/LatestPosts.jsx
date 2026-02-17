@@ -16,7 +16,6 @@ function LatestPosts() {
           created_at,
           author:profiles!posts_author_id_fkey(username)
         `)
-        .eq('is_deleted', false)
         .order('created_at', { ascending: false })
         .limit(10)
         ;
