@@ -23,7 +23,7 @@ function MostDiscussed() {
       <ul>
         {posts.map(p => (
           <li key={p.id}>
-            {p.comments_count} comments
+            {p.title} -- {p.comments_count} comments
           </li>
         ))}
       </ul>

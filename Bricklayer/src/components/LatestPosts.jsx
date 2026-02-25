@@ -30,7 +30,7 @@ function LatestPosts() {
     };
 
     fetchLatest();
-  }, [posts]);
+  }, []);
 
   if (loading) {
     return <section><h2>Loading models...</h2></section>;
