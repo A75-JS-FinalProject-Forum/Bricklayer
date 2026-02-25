@@ -23,7 +23,7 @@ export async function getPosts() {
 
   const { data, error } = await supabase
     .from('posts')
-    .select('*')
+    .select('*, profiles(username), categories(name, slug)')
     .order('created_at', { ascending: false });
 
   if (error) {
@@ -38,7 +38,7 @@ export async function getPostById(id) {
 
   const { data, error } = await supabase
     .from('posts')
-    .select('*')
+    .select('*, profiles(username)')
     .eq('id', id)
     .single();
 
