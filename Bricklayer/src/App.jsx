@@ -21,7 +21,7 @@ function AppRoutes() {
   return (
     <>
       <NavBar />
-      
+      <main className="main-content">
       <Routes>
         <Route path="/" element={<HomePage />} />
         
@@ -49,6 +49,7 @@ function AppRoutes() {
 
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
+      </main>
     </>
   );
 }

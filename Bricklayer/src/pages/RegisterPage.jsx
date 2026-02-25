@@ -52,13 +52,13 @@ export default function Register() {
   };
 
   return (
-    <div>
-      <div>
+    <div className="auth-page">
+      <div className="auth-form">
         <h2>Become a BrickLayer</h2>
-        
+
         {error && (
-          <div>
-            ⚠ {error}
+          <div className="error-message">
+            {error}
           </div>
         )}
 

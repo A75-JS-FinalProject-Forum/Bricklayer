@@ -32,7 +32,7 @@ export default function TagPage() {
     if (error) return <div style={{ color: 'red' }}>{error}</div>;
 
     return (
-        <div>
+        <div className="tag-page">
             <h2>Posts tagged: {name}</h2>
             {posts.length === 0 ? (
                 <p>No posts found with this tag.</p>

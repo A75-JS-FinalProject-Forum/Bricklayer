@@ -52,7 +52,7 @@ export default function CreatePost() {
   };
 
   return (
-    <div style={{ maxWidth: 600, margin: '0 auto' }}>
+    <div className="create-post-page">
       
       <div><Toaster/></div>
 

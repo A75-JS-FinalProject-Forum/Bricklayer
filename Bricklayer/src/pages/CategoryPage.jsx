@@ -27,7 +27,7 @@ export default function CategoryPage() {
   }, [slug])
 
   return (
-    <div>
+    <div className="category-page">
       <h2>{slug}</h2>
       {posts.map(post => (
         <div key={post.id}>

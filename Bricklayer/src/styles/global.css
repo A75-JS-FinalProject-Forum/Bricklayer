@@ -1,0 +1,632 @@
+/* ============================================
+   Bricklayer -- Lego-Themed Global Stylesheet
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+
+/* 1. CSS Variables */
+:root {
+  --lego-yellow: #FFD700;
+  --lego-yellow-hover: #E6C200;
+  --lego-red: #E3000B;
+  --lego-red-hover: #B80009;
+  --lego-blue: #006CB7;
+  --lego-blue-hover: #005A99;
+  --lego-green: #00852B;
+  --lego-bg: #F5F5F0;
+  --lego-dark: #1A1A1A;
+  --lego-gray: #6B7280;
+  --lego-border: #E5E7EB;
+  --lego-card: #FFFFFF;
+  --lego-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --lego-radius: 8px;
+}
+
+/* 2. Reset / Base */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background-color: var(--lego-bg);
+  color: var(--lego-dark);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* 3. Typography */
+h1, h2, h3, h4 {
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 0.5em;
+  color: var(--lego-dark);
+}
+
+h1 { font-size: 2rem; }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.2rem; }
+
+p {
+  margin-bottom: 0.5em;
+  color: var(--lego-dark);
+}
+
+a {
+  color: var(--lego-blue);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: var(--lego-blue-hover);
+  text-decoration: underline;
+}
+
+small {
+  color: var(--lego-gray);
+}
+
+hr {
+  border: none;
+  border-top: 2px solid var(--lego-border);
+  margin: 1.5rem 0;
+}
+
+/* 4. Layout */
+.main-content {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+/* 5. Navbar */
+.navbar {
+  background: var(--lego-yellow);
+  padding: 0.75rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-wrap: wrap;
+}
+
+.navbar strong {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--lego-dark);
+  margin-right: 0.5rem;
+}
+
+.navbar span {
+  color: var(--lego-gray);
+  user-select: none;
+}
+
+.navbar a {
+  color: var(--lego-dark);
+  font-weight: 700;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.navbar a:hover {
+  background: rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  color: var(--lego-dark);
+}
+
+.navbar button {
+  background: var(--lego-dark);
+  color: var(--lego-yellow);
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 4px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.navbar button:hover {
+  background: #333;
+}
+
+/* 6. Buttons */
+button {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.6rem 1.4rem;
+  border: none;
+  border-radius: var(--lego-radius);
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--lego-yellow);
+  color: var(--lego-dark);
+}
+
+.btn-primary:hover {
+  background: var(--lego-yellow-hover);
+}
+
+.btn-danger {
+  background: var(--lego-red);
+  color: white;
+}
+
+.btn-danger:hover {
+  background: var(--lego-red-hover);
+}
+
+/* Generic form/page buttons (non-nav) */
+.create-post-page button[type="submit"],
+.auth-form button[type="submit"],
+.profile-page button {
+  background: var(--lego-yellow);
+  color: var(--lego-dark);
+  border: 2px solid transparent;
+  padding: 0.6rem 1.4rem;
+  border-radius: var(--lego-radius);
+  font-size: 1rem;
+}
+
+.create-post-page button[type="submit"]:hover,
+.auth-form button[type="submit"]:hover,
+.profile-page button:hover {
+  background: var(--lego-yellow-hover);
+}
+
+/* 7. Forms */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border: 2px solid var(--lego-border);
+  border-radius: var(--lego-radius);
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+  color: var(--lego-dark);
+  background: var(--lego-card);
+  transition: border-color 0.2s;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--lego-blue);
+  box-shadow: 0 0 0 3px rgba(0, 108, 183, 0.15);
+}
+
+label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+  color: var(--lego-dark);
+}
+
+form > div {
+  margin-bottom: 1rem;
+}
+
+/* 8. Post Card */
+.post-card {
+  background: var(--lego-card);
+  border: 2px solid var(--lego-border);
+  border-radius: var(--lego-radius);
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--lego-shadow);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.post-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.post-card h3 {
+  margin-bottom: 0.3rem;
+}
+
+.post-card h3 a {
+  color: var(--lego-dark);
+  font-weight: 800;
+}
+
+.post-card h3 a:hover {
+  color: var(--lego-blue);
+}
+
+.post-card > p {
+  color: var(--lego-gray);
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+/* 9. Post Detail */
+.post-detail {
+  background: var(--lego-card);
+  border-radius: var(--lego-radius);
+  padding: 2rem;
+  box-shadow: var(--lego-shadow);
+}
+
+.post-detail h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0.3rem;
+}
+
+.post-detail > p {
+  margin-bottom: 1rem;
+}
+
+/* 10. Comments */
+.comment {
+  background: var(--lego-card);
+  border: 1px solid var(--lego-border);
+  border-left: 4px solid var(--lego-yellow);
+  border-radius: 0 var(--lego-radius) var(--lego-radius) 0;
+  padding: 0.85rem 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.comment strong {
+  color: var(--lego-blue);
+  font-weight: 700;
+}
+
+.comment p {
+  margin: 0.3rem 0;
+}
+
+.comment textarea {
+  margin-top: 0.5rem;
+}
+
+.comment button {
+  padding: 0.3rem 0.8rem;
+  border: 1px solid var(--lego-border);
+  border-radius: 4px;
+  background: var(--lego-card);
+  font-size: 0.85rem;
+  margin-right: 0.3rem;
+  margin-top: 0.3rem;
+}
+
+.comment button:hover {
+  background: var(--lego-bg);
+}
+
+/* 11. Home Page Sections */
+.home-page > h1 {
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+  color: var(--lego-dark);
+}
+
+.home-page section,
+.home-page .categories,
+.home-page .community-spotlight {
+  background: var(--lego-card);
+  border: 2px solid var(--lego-border);
+  border-radius: var(--lego-radius);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--lego-shadow);
+}
+
+.home-page section h2,
+.home-page .categories h2,
+.home-page .community-spotlight h2 {
+  font-size: 1.3rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 3px solid var(--lego-yellow);
+  margin-bottom: 1rem;
+}
+
+.home-page section ul li,
+.home-page .categories ul li {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--lego-border);
+}
+
+.home-page section ul li:last-child,
+.home-page .categories ul li:last-child {
+  border-bottom: none;
+}
+
+.home-page section ul li a {
+  font-weight: 700;
+}
+
+.home-page section ul li small {
+  display: block;
+  color: var(--lego-gray);
+  font-size: 0.85rem;
+}
+
+/* 12. Auth Pages */
+.auth-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 2rem;
+}
+
+.auth-form {
+  background: var(--lego-card);
+  border: 2px solid var(--lego-border);
+  border-radius: var(--lego-radius);
+  padding: 2rem;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: var(--lego-shadow);
+}
+
+.auth-form h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.6rem;
+}
+
+.auth-form .error-message {
+  background: #FEE2E2;
+  color: var(--lego-red);
+  border: 1px solid #FECACA;
+  border-radius: var(--lego-radius);
+  padding: 0.6rem 1rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.auth-form button[type="submit"] {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.auth-form p,
+.auth-form > div:last-child {
+  text-align: center;
+  margin-top: 1rem;
+  color: var(--lego-gray);
+}
+
+.auth-form a {
+  font-weight: 700;
+}
+
+/* 13. Categories */
+.categories ul li p {
+  color: var(--lego-gray);
+  font-size: 0.9rem;
+  margin: 0.2rem 0 0;
+}
+
+/* 14. Community Spotlight */
+.community-spotlight ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.spotlight-user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border-radius: var(--lego-radius);
+  transition: background 0.2s;
+}
+
+.spotlight-user:hover {
+  background: var(--lego-bg);
+}
+
+.spotlight-user .rank {
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--lego-yellow-hover);
+  min-width: 2rem;
+}
+
+.spotlight-user img {
+  border-radius: 50%;
+  border: 2px solid var(--lego-yellow);
+  object-fit: cover;
+}
+
+.spotlight-user strong {
+  display: block;
+}
+
+.spotlight-user p {
+  color: var(--lego-gray);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* 15. Profile Page */
+.profile-page {
+  background: var(--lego-card);
+  border: 2px solid var(--lego-border);
+  border-radius: var(--lego-radius);
+  padding: 2rem;
+  max-width: 600px;
+  box-shadow: var(--lego-shadow);
+}
+
+.profile-page h2 {
+  border-bottom: 3px solid var(--lego-yellow);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.profile-page p {
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--lego-border);
+}
+
+.profile-page p:last-of-type {
+  border-bottom: none;
+}
+
+.profile-page button {
+  margin-top: 1rem;
+  margin-right: 0.5rem;
+}
+
+/* 16. Tag Chips */
+.tag-chip {
+  display: inline-block;
+  background: #E8F4FD;
+  color: var(--lego-blue);
+  border-radius: 12px;
+  padding: 2px 10px;
+  margin-right: 6px;
+  margin-bottom: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.tag-chip:hover {
+  background: #D0EAFB;
+  text-decoration: none;
+  color: var(--lego-blue-hover);
+}
+
+/* Create Post Page */
+.create-post-page {
+  background: var(--lego-card);
+  border: 2px solid var(--lego-border);
+  border-radius: var(--lego-radius);
+  padding: 2rem;
+  max-width: 700px;
+  margin: 0 auto;
+  box-shadow: var(--lego-shadow);
+}
+
+.create-post-page h2 {
+  border-bottom: 3px solid var(--lego-yellow);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Tag Page */
+.tag-page {
+  max-width: 800px;
+}
+
+.tag-page h2 {
+  margin-bottom: 1rem;
+}
+
+/* Category Page */
+.category-page h2 {
+  text-transform: capitalize;
+  margin-bottom: 1rem;
+}
+
+.category-page > div {
+  background: var(--lego-card);
+  border: 1px solid var(--lego-border);
+  border-radius: var(--lego-radius);
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Post List */
+.post-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* 17. Utility */
+.error-text {
+  color: var(--lego-red);
+  font-weight: 600;
+}
+
+.loading-text {
+  color: var(--lego-gray);
+  font-style: italic;
+  padding: 2rem;
+  text-align: center;
+}
+
+/* Vote buttons in post-card and post-detail (override inline styles that set background:none) */
+.post-card button,
+.vote-controls button {
+  border: none;
+  background: none;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.post-card button:hover,
+.vote-controls button:hover {
+  background: var(--lego-bg);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .main-content {
+    padding: 1rem;
+  }
+
+  .navbar {
+    padding: 0.5rem 1rem;
+    gap: 0.25rem;
+  }
+
+  .auth-form {
+    padding: 1.5rem;
+  }
+
+  .post-detail,
+  .create-post-page,
+  .profile-page {
+    padding: 1.25rem;
+  }
+}
