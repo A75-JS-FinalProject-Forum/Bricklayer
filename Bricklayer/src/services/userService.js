@@ -20,7 +20,7 @@ export const userService = {
             .update(updates)
             .eq('id', userId)
             .select()
-            .single();
+            
 
         if (error) {
             throw new Error(`Error: ${error.message}`);
