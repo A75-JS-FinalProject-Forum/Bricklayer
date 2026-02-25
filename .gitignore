@@ -140,3 +140,5 @@ vite.config.ts.timestamp-*
 
 # exclude claude files
 .claude/
+CLAUDE.md
+docs/

@@ -1,21 +1,25 @@
 import { useEffect, useState } from 'react';
+import { supabase } from '../lib/supabase';
+import { Link } from 'react-router-dom';
 
 function FeaturedPosts() {
   const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        const { data, error } = await supabase
+          .from('posts')
+          .select('id, title, score, profiles(username)')
+          .eq('is_deleted', false)
+          .order('score', { ascending: false })
+          .limit(5);
 
-        const data = [
-          { id: 1, title: 'Epic Castle Build', likes: 45 },
-          { id: 2, title: 'Star Wars MOC', likes: 12 }
-        ];
-
-        setPosts(data);
+        if (error) throw error;
+        setPosts(data || []);
       } catch (error) {
-        console.error("error loading:", error);
+        console.error('Error loading featured posts:', error);
       } finally {
         setLoading(false);
       }
@@ -25,7 +29,16 @@ function FeaturedPosts() {
   }, []);
 
   if (loading) {
-    return <section><h2>Loading models...</h2></section>;
+    return <section><h2>Loading featured builds...</h2></section>;
+  }
+
+  if (posts.length === 0) {
+    return (
+      <section>
+        <h2>Featured Builds</h2>
+        <p>No featured posts yet.</p>
+      </section>
+    );
   }
 
   return (
@@ -34,7 +47,8 @@ function FeaturedPosts() {
       <ul>
         {posts.map(p => (
           <li key={p.id}>
-            <span>{p.title}{p.likes}</span>
+            <Link to={`/posts/${p.id}`}>{p.title}</Link>
+            {' '} by {p.profiles?.username || 'Unknown'} | Score: {p.score}
           </li>
         ))}
       </ul>
