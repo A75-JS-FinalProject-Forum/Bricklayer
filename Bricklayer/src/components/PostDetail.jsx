@@ -2,6 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { getPostById, updatePost } from '../services/postService'
+import { createComment, getCommentsByPostId } from '../services/commentService'
 import { castPostVote, removePostVote, getUserPostVote } from '../services/voteService'
 import { getTagsByPostId, addTagToPost, removeTagFromPost } from '../services/tagService'
 import CommentNode from './CommentNode'
@@ -24,7 +25,10 @@ export default function PostDetail() {
     const [editTagInput, setEditTagInput] = useState('');
 
     const [post, setPost] = useState(null);
+
+    const [comment, setComment] = useState('');
     const [comments, setComments] = useState([]);
+
     const [loading, setLoading] = useState(true);
     const [commentsLoading, setCommentsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -33,6 +37,17 @@ export default function PostDetail() {
     const [userVote, setUserVote] = useState(null);
     const [displayScore, setDisplayScore] = useState(0);
     const [tags, setTags] = useState([]);
+
+    const handleAddComment = async () => {
+        if (!comment.trim() || !user) return;
+        try {
+            await createComment(id, null, user.id, comment);
+            setComment('');
+            fetchComments();
+        } catch {
+            setCommentsError('Failed to add comment.');
+        }
+    };
 
     useEffect(() => {
         const loadUser = async () => {
@@ -71,21 +86,9 @@ export default function PostDetail() {
         setCommentsLoading(true);
         setCommentsError(null);
         try {
-            const { data, error: commentsErr } = await supabase
-                .from('comments')
-                .select(`
-                id,
-                content,
-                score,
-                parent_id,
-                created_at,
-                profiles (username)
-            `)
-                .eq('post_id', id)
-                .eq('is_deleted', false)
-                .order('created_at', { ascending: true });
-            if (commentsErr) throw commentsErr;
-            const tree = buildCommentTree(data || []);
+            const data = await getCommentsByPostId(id);
+            const filtered = (data || []).filter(c => !c.is_deleted);
+            const tree = buildCommentTree(filtered);
             setComments(tree);
         } catch {
             setCommentsError('Failed to load comments.');
@@ -102,7 +105,9 @@ export default function PostDetail() {
 
     // Fetch user's existing vote on this post
     useEffect(() => {
+
         if (!user || !id) return;
+
         getUserPostVote(user.id, id)
             .then(vote => setUserVote(vote?.vote_type || null))
             .catch(() => setUserVote(null));
@@ -117,7 +122,9 @@ export default function PostDetail() {
     }, [id]);
 
     const handleVote = async (voteType) => {
+
         if (!user) return;
+
         try {
             if (userVote === voteType) {
                 // Toggle off: remove vote
@@ -208,14 +215,14 @@ export default function PostDetail() {
     };
 
     const handleDelete = async () => {
-        
+
         if (!window.confirm('Are you sure you want to delete this post?')) {
             return;
         }
 
         setDeleting(true);
         setDeleteError(null);
-        
+
         try {
             await deletePost(id);
             navigate('/'); // Redirect to home after deletion
@@ -381,6 +388,16 @@ export default function PostDetail() {
             )}
             <hr />
             <h3>Comments</h3>
+
+            <textarea
+                name="submit-comment"
+                id="submit"
+                value={comment}
+                onChange={e => setComment(e.target.value)}
+            />
+
+            <button onClick={handleAddComment}>Comment</button>
+
             {commentsLoading ? (
                 <div>Loading comments...</div>
             ) : commentsError ? (
