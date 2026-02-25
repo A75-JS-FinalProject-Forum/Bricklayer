@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { getPostById, updatePost } from '../services/postService'
 import { castPostVote, removePostVote, getUserPostVote } from '../services/voteService'
-import { getTagsByPostId } from '../services/tagService'
+import { getTagsByPostId, addTagToPost, removeTagFromPost } from '../services/tagService'
 import CommentNode from './CommentNode'
 import { buildCommentTree } from '../utils/commentTree'
 import { deletePost } from '../services/postService'
@@ -20,6 +20,8 @@ export default function PostDetail() {
     const [editContent, setEditContent] = useState('');
     const [editError, setEditError] = useState(null);
     const [editSuccess, setEditSuccess] = useState(null);
+    const [editTags, setEditTags] = useState([]);
+    const [editTagInput, setEditTagInput] = useState('');
 
     const [post, setPost] = useState(null);
     const [comments, setComments] = useState([]);
@@ -147,6 +149,8 @@ export default function PostDetail() {
     const handleEdit = () => {
         setEditTitle(post.title);
         setEditContent(post.content);
+        setEditTags(tags.map(t => ({ id: t.id, name: t.name })));
+        setEditTagInput('');
         setEditError(null);
         setEditSuccess(null);
         setEditing(true);
@@ -168,6 +172,33 @@ export default function PostDetail() {
         }
         try {
             const updated = await updatePost(id, { title: editTitle, content: editContent });
+
+            // Diff tags: find removed and added
+            const originalNames = new Set(tags.map(t => t.name));
+            const editNames = new Set(editTags.map(t => t.name));
+
+            // Remove tags that were in original but not in edit
+            for (const tag of tags) {
+                if (!editNames.has(tag.name)) {
+                    await removeTagFromPost(id, tag.id);
+                }
+            }
+
+            // Add tags that are in edit but not in original
+            for (const tag of editTags) {
+                if (!originalNames.has(tag.name)) {
+                    await addTagToPost(id, tag.name);
+                }
+            }
+
+            // Refresh tags from DB
+            try {
+                const refreshedTags = await getTagsByPostId(id);
+                setTags(refreshedTags);
+            } catch {
+                // Non-critical; tags will refresh on next page load
+            }
+
             setPost({ ...post, ...updated });
             setEditSuccess('Post updated successfully.');
             setEditing(false);
@@ -215,6 +246,50 @@ export default function PostDetail() {
                             value={editContent}
                             onChange={e => setEditContent(e.target.value)}
                             rows={6}
+                            style={{ width: '100%', padding: 8 }}
+                        />
+                    </div>
+                    <div style={{ marginTop: 12 }}>
+                        <label>Tags (up to 5)</label><br />
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
+                            {editTags.map(tag => (
+                                <span key={tag.id ?? tag.name} className="tag-chip" style={{ cursor: 'default' }}>
+                                    {tag.name}
+                                    <button
+                                        type="button"
+                                        onClick={() => setEditTags(prev => prev.filter(t => t.name !== tag.name))}
+                                        style={{
+                                            background: 'none',
+                                            border: 'none',
+                                            cursor: 'pointer',
+                                            marginLeft: 4,
+                                            padding: 0,
+                                            fontSize: '0.85rem',
+                                            lineHeight: 1,
+                                            color: 'inherit'
+                                        }}
+                                    >
+                                        ✕
+                                    </button>
+                                </span>
+                            ))}
+                        </div>
+                        <input
+                            type="text"
+                            value={editTagInput}
+                            onChange={e => setEditTagInput(e.target.value)}
+                            onKeyDown={e => {
+                                if (e.key === 'Enter' || e.key === ',') {
+                                    e.preventDefault();
+                                    const name = editTagInput.toLowerCase().trim();
+                                    if (name && editTags.length < 5 && !editTags.some(t => t.name === name)) {
+                                        setEditTags(prev => [...prev, { id: null, name }]);
+                                    }
+                                    setEditTagInput('');
+                                }
+                            }}
+                            placeholder={editTags.length >= 5 ? 'Max 5 tags' : 'Type a tag and press Enter'}
+                            disabled={editTags.length >= 5}
                             style={{ width: '100%', padding: 8 }}
                         />
                     </div>
