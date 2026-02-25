@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/useAuth.js';
-import { userService } from '../services/user.js';
+import { userService } from '../services/userService.js';
 
 export default function ProfilePage() {
   const { user } = useAuth();
