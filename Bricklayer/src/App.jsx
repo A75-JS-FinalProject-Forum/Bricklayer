@@ -6,6 +6,8 @@ import RegisterPage from './pages/RegisterPage'
 import CategoryPage from './pages/CategoryPage'
 import { AuthProvider } from './context/AuthContext'
 import CreatePost from './pages/CreatePost'
+import PostDetail from './components/PostDetail'
+import TagPage from './pages/TagPage'
 import { useAuth } from './context/useAuth'
 import ProfilePage from './pages/ProfilePage'
 
@@ -42,7 +44,9 @@ function AppRoutes() {
         />
         
         <Route path="/category/:slug" element={<CategoryPage />} />
-        
+        <Route path="/posts/:id" element={<PostDetail />} />
+        <Route path="/tags/:name" element={<TagPage />} />
+
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </>

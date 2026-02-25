@@ -1,11 +1,39 @@
-import { useState } from 'react';
-import { supabase } from '../supabaseClient';
+import { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
+import { castCommentVote, removeCommentVote, getUserCommentVote } from '../services/voteService';
 
 export default function CommentNode({ comment, postId, depth = 0, refreshComments, user }) {
     const [showReply, setShowReply] = useState(false);
     const [replyText, setReplyText] = useState('');
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState(null);
+    const [userVote, setUserVote] = useState(null);
+    const [displayScore, setDisplayScore] = useState(comment.score);
+
+    useEffect(() => {
+        if (!user || !comment.id) return;
+        getUserCommentVote(user.id, comment.id)
+            .then(vote => setUserVote(vote?.vote_type || null))
+            .catch(() => setUserVote(null));
+    }, [user, comment.id]);
+
+    const handleVote = async (voteType) => {
+        if (!user) return;
+        try {
+            if (userVote === voteType) {
+                await removeCommentVote(user.id, comment.id);
+                setDisplayScore(prev => prev - voteType);
+                setUserVote(null);
+            } else {
+                await castCommentVote(user.id, comment.id, voteType);
+                const scoreDelta = userVote ? voteType - userVote : voteType;
+                setDisplayScore(prev => prev + scoreDelta);
+                setUserVote(voteType);
+            }
+        } catch (err) {
+            console.error('Comment vote failed:', err);
+        }
+    };
 
     const handleReply = async () => {
         if (!user) {
@@ -45,7 +73,7 @@ export default function CommentNode({ comment, postId, depth = 0, refreshComment
         if (!dbError) {
             setReplyText('');
             setShowReply(false);
-            refreshComments(); // re-fetch comments
+            refreshComments();
         } else {
             setError(dbError.message);
         }
@@ -56,7 +84,37 @@ export default function CommentNode({ comment, postId, depth = 0, refreshComment
             <div className="comment">
                 <strong>{comment.profiles?.username}</strong>
                 <p>{comment.content}</p>
-                <small>⭐ {comment.score}</small>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <button
+                        onClick={() => handleVote(1)}
+                        disabled={!user}
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            cursor: user ? 'pointer' : 'default',
+                            fontSize: 12,
+                            opacity: userVote === 1 ? 1 : 0.4,
+                            padding: '0 2px'
+                        }}
+                    >
+                        ▲
+                    </button>
+                    <small style={{ fontWeight: 'bold' }}>{displayScore}</small>
+                    <button
+                        onClick={() => handleVote(-1)}
+                        disabled={!user}
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            cursor: user ? 'pointer' : 'default',
+                            fontSize: 12,
+                            opacity: userVote === -1 ? 1 : 0.4,
+                            padding: '0 2px'
+                        }}
+                    >
+                        ▼
+                    </button>
+                </div>
                 <div>
                     <button onClick={() => setShowReply(!showReply)} disabled={!user}>
                         Reply

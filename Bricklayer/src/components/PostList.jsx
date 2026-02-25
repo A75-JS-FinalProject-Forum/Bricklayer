@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import { getPosts } from '../services/postService'
+import { useAuth } from '../context/useAuth'
 import PostCard from './PostCard'
 
 export default function PostList() {
+    const { user } = useAuth();
     const [posts, setPosts] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
@@ -37,7 +39,7 @@ export default function PostList() {
     return (
         <div>
             {posts.map(post => (
-                <PostCard key={post.id} post={post} />
+                <PostCard key={post.id} post={post} user={user} />
             ))}
         </div>
     );

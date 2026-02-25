@@ -1,10 +1,13 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useEffect, useState, useCallback } from 'react'
-import { supabase } from '../supabaseClient'
+import { supabase } from '../lib/supabase'
 import { getPostById, updatePost } from '../services/postService'
+import { castPostVote, removePostVote, getUserPostVote } from '../services/voteService'
+import { getTagsByPostId } from '../services/tagService'
 import CommentNode from './CommentNode'
 import { buildCommentTree } from '../utils/commentTree'
 import { deletePost } from '../services/postService'
+import { Link } from 'react-router-dom'
 
 export default function PostDetail() {
 
@@ -25,6 +28,9 @@ export default function PostDetail() {
     const [error, setError] = useState(null);
     const [commentsError, setCommentsError] = useState(null);
     const [user, setUser] = useState(null);
+    const [userVote, setUserVote] = useState(null);
+    const [displayScore, setDisplayScore] = useState(0);
+    const [tags, setTags] = useState([]);
 
     useEffect(() => {
         const loadUser = async () => {
@@ -86,6 +92,47 @@ export default function PostDetail() {
             setCommentsLoading(false);
         }
     }, [id]);
+
+    // Sync displayScore when post loads
+    useEffect(() => {
+        if (post) setDisplayScore(post.score);
+    }, [post]);
+
+    // Fetch user's existing vote on this post
+    useEffect(() => {
+        if (!user || !id) return;
+        getUserPostVote(user.id, id)
+            .then(vote => setUserVote(vote?.vote_type || null))
+            .catch(() => setUserVote(null));
+    }, [user, id]);
+
+    // Fetch tags for this post
+    useEffect(() => {
+        if (!id) return;
+        getTagsByPostId(id)
+            .then(setTags)
+            .catch(() => setTags([]));
+    }, [id]);
+
+    const handleVote = async (voteType) => {
+        if (!user) return;
+        try {
+            if (userVote === voteType) {
+                // Toggle off: remove vote
+                await removePostVote(user.id, id);
+                setDisplayScore(prev => prev - voteType);
+                setUserVote(null);
+            } else {
+                // Cast new vote (or change direction)
+                await castPostVote(user.id, id, voteType);
+                const scoreDelta = userVote ? voteType - userVote : voteType;
+                setDisplayScore(prev => prev + scoreDelta);
+                setUserVote(voteType);
+            }
+        } catch (err) {
+            console.error('Vote failed:', err);
+        }
+    };
 
     if (loading) {
         return <div>Loading post...</div>
@@ -180,8 +227,62 @@ export default function PostDetail() {
                 <>
                     <h2>{post.title}</h2>
                     <p>by {post.profiles?.username || 'Unknown author'}</p>
+                    {tags.length > 0 && (
+                        <div style={{ marginBottom: 8 }}>
+                            {tags.map(tag => (
+                                <Link
+                                    key={tag.id}
+                                    to={`/tags/${tag.name}`}
+                                    style={{
+                                        display: 'inline-block',
+                                        background: '#e0e0e0',
+                                        borderRadius: 12,
+                                        padding: '2px 10px',
+                                        marginRight: 6,
+                                        fontSize: 13,
+                                        textDecoration: 'none',
+                                        color: '#333'
+                                    }}
+                                >
+                                    {tag.name}
+                                </Link>
+                            ))}
+                        </div>
+                    )}
                     <p>{post.content}</p>
-                    <p>⭐ {post.score}</p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '12px 0' }}>
+                        <button
+                            onClick={() => handleVote(1)}
+                            disabled={!user}
+                            style={{
+                                background: 'none',
+                                border: 'none',
+                                cursor: user ? 'pointer' : 'default',
+                                fontSize: 20,
+                                opacity: userVote === 1 ? 1 : 0.4
+                            }}
+                            title={user ? 'Upvote' : 'Log in to vote'}
+                        >
+                            ▲
+                        </button>
+                        <span style={{ fontWeight: 'bold', fontSize: 18, minWidth: 24, textAlign: 'center' }}>
+                            {displayScore}
+                        </span>
+                        <button
+                            onClick={() => handleVote(-1)}
+                            disabled={!user}
+                            style={{
+                                background: 'none',
+                                border: 'none',
+                                cursor: user ? 'pointer' : 'default',
+                                fontSize: 20,
+                                opacity: userVote === -1 ? 1 : 0.4
+                            }}
+                            title={user ? 'Downvote' : 'Log in to vote'}
+                        >
+                            ▼
+                        </button>
+                    </div>
                     {/* Show edit/delete buttons only if user is author */}
                     {isAuthor && (
                         <>
