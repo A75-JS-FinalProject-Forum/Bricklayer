@@ -97,7 +97,7 @@ hr {
   padding: 0.75rem 2rem;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: space-between;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
   position: sticky;
   top: 0;
@@ -109,12 +109,18 @@ hr {
   font-size: 1.3rem;
   font-weight: 800;
   color: var(--lego-dark);
-  margin-right: 0.5rem;
 }
 
-.navbar span {
-  color: var(--lego-gray);
-  user-select: none;
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.navbar-auth {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .navbar a {
@@ -227,6 +233,10 @@ textarea {
   color: var(--lego-dark);
   background: var(--lego-card);
   transition: border-color 0.2s;
+}
+
+textarea {
+  resize: none;
 }
 
 input:focus,
@@ -617,6 +627,9 @@ form > div {
 
   .navbar {
     padding: 0.5rem 1rem;
+  }
+
+  .navbar-links {
     gap: 0.25rem;
   }
 
