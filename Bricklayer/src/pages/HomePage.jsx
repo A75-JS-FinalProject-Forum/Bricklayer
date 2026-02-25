@@ -9,10 +9,11 @@ import { useNavigate } from 'react-router-dom';
 function HomePage() {
   const navigate = useNavigate();
   return (
-    <div>
+    <div className="home-page">
       <h1>Lego Forum</h1>
       <button
-        style={{ marginBottom: 20, padding: '8px 16px', fontSize: 16 }}
+        className="btn btn-primary"
+        style={{ marginBottom: 20 }}
         onClick={() => navigate('/create')}
       >
         Create Post

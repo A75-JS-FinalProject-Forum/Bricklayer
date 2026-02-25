@@ -40,10 +40,11 @@ export default function Login() {
   };
 
   return (
-    <div>
+    <div className="auth-page">
+      <div className="auth-form">
       <h2>Enter</h2>
-      {error && <p>{error}</p>}
-      
+      {error && <div className="error-message">{error}</div>}
+
       <form onSubmit={handleSubmit}>
         <input
           type="email"
@@ -63,6 +64,7 @@ export default function Login() {
       </form>
       
       <p>Don't have a profile? <Link to="/register">Create one</Link></p>
+      </div>
     </div>
   );
 }

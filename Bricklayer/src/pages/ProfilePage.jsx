@@ -58,7 +58,7 @@ export default function ProfilePage() {
   if (!profile) return <div>Profile not found.</div>;
 
   return (
-    <div>
+    <div className="profile-page">
       <h2>User Profile</h2>
       
       {isEditing ? (

@@ -37,7 +37,7 @@ export default function PostList() {
         return <div>No posts found.</div>;
     }
     return (
-        <div>
+        <div className="post-list">
             {posts.map(post => (
                 <PostCard key={post.id} post={post} user={user} />
             ))}

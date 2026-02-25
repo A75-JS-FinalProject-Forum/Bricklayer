@@ -5,7 +5,7 @@ export default function NavBar() {
     const {user, logout} = useAuth()
     
     return (
-        <nav>
+        <nav className="navbar">
             <strong>The BrickLayer</strong>
             <span> | </span>
                 <Link to="/">Feed</Link>
