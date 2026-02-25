@@ -1,8 +1,16 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { castCommentVote, removeCommentVote, getUserCommentVote } from '../services/voteService';
+import { updateComment, deleteComment } from '../services/commentService';
 
 export default function CommentNode({ comment, postId, depth = 0, refreshComments, user }) {
+    const isAuthor = user && comment.author_id === user.id;
+    const [editing, setEditing] = useState(false);
+    const [editText, setEditText] = useState(comment.content);
+    const [editError, setEditError] = useState(null);
+    const [deleteError, setDeleteError] = useState(null);
+
+    const [deleting, setDeleting] = useState(false);
     const [showReply, setShowReply] = useState(false);
     const [replyText, setReplyText] = useState('');
     const [submitting, setSubmitting] = useState(false);
@@ -83,7 +91,42 @@ export default function CommentNode({ comment, postId, depth = 0, refreshComment
         <div style={{ marginLeft: depth * 20, marginTop: 10 }}>
             <div className="comment">
                 <strong>{comment.profiles?.username}</strong>
-                <p>{comment.content}</p>
+                {editing ? (
+                    <>
+                        <textarea
+                            value={editText}
+                            onChange={e => setEditText(e.target.value)}
+                            rows={3}
+                            style={{ width: '100%' }}
+                        />
+                        <br />
+                        <button
+                            onClick={async () => {
+                                setEditError(null);
+                                if (!editText.trim()) {
+                                    setEditError('Comment cannot be empty.');
+                                    return;
+                                }
+                                try {
+                                    await updateComment(comment.id, editText);
+                                    setEditing(false);
+                                    refreshComments();
+                                } catch {
+                                    setEditError('Failed to update comment.');
+                                }
+                            }}
+                            style={{ marginRight: 8 }}
+                        >Save</button>
+
+                        <button onClick={() => { setEditing(false); setEditText(comment.content); }}>
+                            Cancel
+                        </button>
+
+                        {editError && <div style={{ color: 'red', marginTop: 4 }}>{editError}</div>}
+                    </>
+                ) : (
+                    <p>{comment.content}</p>
+                )}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                     <button
                         onClick={() => handleVote(1)}
@@ -119,6 +162,33 @@ export default function CommentNode({ comment, postId, depth = 0, refreshComment
                     <button onClick={() => setShowReply(!showReply)} disabled={!user}>
                         Reply
                     </button>
+                    {isAuthor && !editing && (
+                        <>
+                            <button
+                                onClick={() => setEditing(true)}
+                                style={{ marginLeft: 8 }}
+                            >Edit</button>
+                            <button
+                                onClick={async () => {
+                                    setDeleteError(null);
+
+                                    if (!window.confirm('Delete this comment?')) return;
+                                    setDeleting(true);
+                                    try {
+                                        await deleteComment(comment.id);
+                                        refreshComments();
+                                    } catch {
+                                        setDeleteError(null);
+                                    }
+                                    setDeleting('Failed to delete comment.');
+                                }}
+                                style={{ marginLeft: 4, color: 'red' }}
+                                disabled={deleting}
+                            >{deleting ? 'Deleting...' : 'Delete'}
+                            </button>
+                            {deleteError && <div style={{ color: 'red', marginTop: 4 }}>{deleteError}</div>}
+                        </>
+                    )}
                 </div>
                 {showReply && (
                     <div style={{ marginTop: 8 }}>
