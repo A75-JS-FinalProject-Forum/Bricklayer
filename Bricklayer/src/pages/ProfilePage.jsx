@@ -39,8 +39,8 @@ export default function ProfilePage() {
   const handleSave = async () => {
     try {
       setLoading(true);
-      const updatedProfile = await userService.updateProfile(user.id, editData);
-      setProfile(updatedProfile);
+      await userService.updateProfile(user.id, editData);
+      setProfile(prev => ({...prev, ...editData}));
       setIsEditing(false);
     } catch (err) {
       setError("Error saving: " + err.message);
