@@ -7,20 +7,8 @@ import CategoryPage from './pages/CategoryPage'
 import { AuthProvider } from './context/AuthContext'
 import CreatePost from './pages/CreatePost'
 import { useAuth } from './context/useAuth'
+import ProfilePage from './pages/ProfilePage'
 
-const Feed = () => (
-  <div>
-    <h2>Feed</h2>
-    <p>Welcome to the forum.</p>
-  </div>
-);
-
-const Profile = ({ email }) => (
-  <div>
-    <h2>User Profile</h2>
-    <p>Logged in as: {email}</p>
-  </div>
-);
 function AppRoutes() {
   const { user, loading } = useAuth(); 
 
@@ -50,7 +38,7 @@ function AppRoutes() {
         />
         <Route 
           path="/profile" 
-          element={user ? <Profile /> : <Navigate to="/login" />} 
+          element={user ? <ProfilePage /> : <Navigate to="/login" />} 
         />
         
         <Route path="/category/:slug" element={<CategoryPage />} />
