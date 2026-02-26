@@ -9,10 +9,15 @@ function FeaturedPosts() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
+        
+        // Get ISO string for 7 days ago
+        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+
         const { data, error } = await supabase
           .from('posts')
           .select('id, title, score, profiles(username)')
           .eq('is_deleted', false)
+          .gte('created_at', sevenDaysAgo)
           .order('score', { ascending: false })
           .limit(5);
 

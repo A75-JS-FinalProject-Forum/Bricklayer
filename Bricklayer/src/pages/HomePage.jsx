@@ -5,6 +5,7 @@ import Categories from '../components/Categories';
 import CommunitySpotlight from '../components/CommunitySpotlight';
 
 import { useNavigate } from 'react-router-dom';
+import StatsBar from '../components/StatsBar';
 
 function HomePage() {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ function HomePage() {
       <LatestPosts />
       <Categories />
       <CommunitySpotlight />
+      <StatsBar />
     </div>
   );
 }

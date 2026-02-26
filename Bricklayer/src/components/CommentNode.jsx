@@ -180,7 +180,7 @@ export default function CommentNode({ comment, postId, depth = 0, refreshComment
                                     } catch {
                                         setDeleteError(null);
                                     }
-                                    setDeleting('Failed to delete comment.');
+                                    setDeleteError('Failed to delete comment.');
                                 }}
                                 style={{ marginLeft: 4, color: 'red' }}
                                 disabled={deleting}

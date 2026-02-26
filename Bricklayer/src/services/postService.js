@@ -1,5 +1,17 @@
 import { supabase } from '../lib/supabase';
 
+// Get total post count
+export async function getTotalPosts() {
+
+  const { count, error } = await supabase
+    .from('posts')
+    .select('id', { count: 'exact', head: true });
+    
+  if (error) throw new Error(error.message);
+  return count;
+
+}
+
 // Validate post data (title and content length)
 export function validatePost({ title, content }) {
 
