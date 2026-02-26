@@ -10,6 +10,7 @@ import PostDetail from './components/PostDetail'
 import TagPage from './pages/TagPage'
 import { useAuth } from './context/useAuth'
 import ProfilePage from './pages/ProfilePage'
+import UserManagement from './pages/admin/UserManagement'
 
 function AppRoutes() {
   const { user, loading } = useAuth(); 
@@ -43,6 +44,11 @@ function AppRoutes() {
           element={user ? <ProfilePage /> : <Navigate to="/login" />} 
         />
         
+        <Route
+          path="/admin/users" 
+          element={<UserManagement />}
+        />
+
         <Route path="/category/:slug" element={<CategoryPage />} />
         <Route path="/posts/:id" element={<PostDetail />} />
         <Route path="/tags/:name" element={<TagPage />} />

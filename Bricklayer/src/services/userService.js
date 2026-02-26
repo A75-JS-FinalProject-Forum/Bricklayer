@@ -26,5 +26,18 @@ export const userService = {
             throw new Error(`Error: ${error.message}`);
         }
         return data
+    },
+
+    async getUserPublicProfile(username) {
+        const {data ,error} = await supabase
+            .from('profiles')
+            .select('username', 'avatar_url', 'reputation', 'created_at')
+            .eq('username', username)
+            .single();
+
+        if (error) {
+            return new Error('User with this username does not exist');
+        }
+        return data;
     }
 }
