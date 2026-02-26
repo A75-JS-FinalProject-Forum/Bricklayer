@@ -36,16 +36,24 @@
 
     const handleSubmit = async (e) => {
       e.preventDefault();
-      setLoading(true);
       setError(null);
 
-      try {
-        if (!user) {
-          setError('You must be logged in to create a post.');
-          setLoading(false);
-          return;
-        }
+      // Validation
+      if (!user) {
+        setError('You must be logged in to create a post.');
+        return;
+      }
+      if (title.length < 16 || title.length > 64) {
+        setError('Title must be between 16 and 64 characters.');
+        return;
+      }
+      if (content.length < 32 || content.length > 8192) {
+        setError('Content must be between 32 and 8192 characters.');
+        return;
+      }
 
+      setLoading(true);
+      try {
         const newPost = await createPost({ author_id: user.id, title, content });
 
         // Save tags to the created post
