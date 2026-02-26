@@ -1,7 +1,21 @@
 import { supabase } from '../lib/supabase';
+// Validate post data (title and content length)
+export function validatePost({ title, content }) {
+  if (!title || title.length < 16 || title.length > 64) {
+    return 'Title must be between 16 and 64 characters.';
+  }
+  if (!content || content.length < 32 || content.length > 8192) {
+    return 'Content must be between 32 and 8192 characters.';
+  }
+  return null;
+}
 
 // CREATE a new post
 export async function createPost({ author_id, category_id, title, content }) {
+  const validationError = validatePost({ title, content });
+  if (validationError) {
+    throw new Error(validationError);
+  }
 
   const { data, error } = await supabase
     .from('posts')
