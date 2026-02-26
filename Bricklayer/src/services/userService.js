@@ -1,5 +1,17 @@
 import { supabase } from '../lib/supabase.js'
 
+// Get total user count
+export async function getTotalUsers() {
+
+    const { count, error } = await supabase
+        .from('profiles')
+        .select('id', { count: 'exact', head: true });
+    
+    if (error) throw new Error(error.message);
+
+    return count;
+}
+
 export const userService = {
     async getProfile(userId) {
         const { data, error } = await supabase

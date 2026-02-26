@@ -1,5 +1,18 @@
 import { supabase } from '../lib/supabase';
 
+// Get total comment count
+export async function getTotalComments() {
+
+    const { count, error } = await supabase
+        .from('comments')
+        .select('id', { count: 'exact', head: true });
+    
+        if (error) throw new Error(error.message);
+
+    return count;
+
+}
+
 // Create a new comment
 export const createComment = async (post_id, parent_id, author_id, content) => {
 
