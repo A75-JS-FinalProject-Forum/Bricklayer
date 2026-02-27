@@ -70,7 +70,7 @@ export async function getPostById(id) {
 
   const { data, error } = await supabase
     .from('posts')
-    .select('*, profiles(username)')
+    .select('*, profiles!posts_author_id_fkey(username)')
     .eq('id', id)
     .single();
 
@@ -85,11 +85,11 @@ export async function getPostById(id) {
 export async function updatePost(id, updates) {
 
   const { data, error } = await supabase
-    .from('posts')
-    .update({ ...updates, updated_at: new Date().toISOString() })
-    .eq('id', id)
-    .select()
-    .single();
+  .from('posts')
+  .update({ ...updates, updated_at: new Date().toISOString() })
+  .eq('id', id)
+  .select()
+  .maybeSingle();
 
   if (error) {
     throw error;
