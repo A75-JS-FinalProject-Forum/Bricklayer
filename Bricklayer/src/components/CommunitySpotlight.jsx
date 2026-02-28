@@ -8,6 +8,7 @@ export default function CommunitySpotlight() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
+
     const fetchTopUsers = async () => {
       const { data, error } = await supabase
         .from('profiles')
@@ -25,6 +26,7 @@ export default function CommunitySpotlight() {
     }
 
     fetchTopUsers()
+    
   }, [])
 
   if (loading) {

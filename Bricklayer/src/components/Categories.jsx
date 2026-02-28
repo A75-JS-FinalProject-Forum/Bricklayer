@@ -13,7 +13,7 @@ function Categories() {
         .from('categories')
         .select('id, name, slug, description')
         .order('name', { ascending: true });
-      
+
       if (error) {
         setError(error.message)
       } else {

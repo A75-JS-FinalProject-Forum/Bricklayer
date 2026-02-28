@@ -4,6 +4,7 @@ import { getTotalPosts } from '../services/postService';
 import { getTotalComments } from '../services/commentService';
 
 export default function StatsBar() {
+
     const [users, setUsers] = useState(null);
     const [posts, setPosts] = useState(null);
     const [comments, setComments] = useState(null);

@@ -75,7 +75,7 @@ export const getCommentsByPostId = async (postId) => {
             created_at,
             is_deleted,
             author_id,
-            profiles (username, avatar_url)
+            profiles!comments_author_id_fkey(username, avatar_url)
         `)
         .eq('post_id', postId)
         .order('created_at', { ascending: true });
