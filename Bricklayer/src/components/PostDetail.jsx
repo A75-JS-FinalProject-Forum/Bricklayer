@@ -61,8 +61,24 @@ export default function PostDetail() {
         loadUser();
     }, [])
 
-    // ...buildCommentTree moved to utils/commentTree.js...
+    // ...CommentNode extracted to its own file...
+    const fetchComments = useCallback(async () => {
+        setCommentsLoading(true);
+        setCommentsError(null);
+        try {
+            const data = await getCommentsByPostId(id);
+            const filtered = (data || []).filter(c => !c.is_deleted);
+            const tree = buildCommentTree(filtered);
+            setComments(tree);
+        } catch {
+            setCommentsError('Failed to load comments.');
+            setComments([]);
+        } finally {
+            setCommentsLoading(false);
+        }
+    }, [id]);
 
+    // ...buildCommentTree moved to utils/commentTree.js...
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
@@ -81,22 +97,7 @@ export default function PostDetail() {
         fetchData();
     }, [id, fetchComments])
 
-    // ...CommentNode extracted to its own file...
-    const fetchComments = useCallback(async () => {
-        setCommentsLoading(true);
-        setCommentsError(null);
-        try {
-            const data = await getCommentsByPostId(id);
-            const filtered = (data || []).filter(c => !c.is_deleted);
-            const tree = buildCommentTree(filtered);
-            setComments(tree);
-        } catch {
-            setCommentsError('Failed to load comments.');
-            setComments([]);
-        } finally {
-            setCommentsLoading(false);
-        }
-    }, [id]);
+
 
     // Sync displayScore when post loads
     useEffect(() => {
@@ -122,24 +123,26 @@ export default function PostDetail() {
     }, [id]);
 
     const handleVote = async (voteType) => {
-
         if (!user) return;
 
         try {
             if (userVote === voteType) {
-                // Toggle off: remove vote
+                // Remove vote
                 await removePostVote(user.id, id);
+
                 setDisplayScore(prev => prev - voteType);
                 setUserVote(null);
             } else {
-                // Cast new vote (or change direction)
                 await castPostVote(user.id, id, voteType);
-                const scoreDelta = userVote ? voteType - userVote : voteType;
-                setDisplayScore(prev => prev + scoreDelta);
+
+                const previousVote = userVote ?? 0;
+                const delta = voteType - previousVote;
+
+                setDisplayScore(prev => prev + delta);
                 setUserVote(voteType);
             }
         } catch (err) {
-            console.error('Vote failed:', err);
+            console.error("Vote failed:", err);
         }
     };
 

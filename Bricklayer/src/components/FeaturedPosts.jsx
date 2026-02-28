@@ -15,7 +15,7 @@ function FeaturedPosts() {
 
         const { data, error } = await supabase
           .from('posts')
-          .select('id, title, score, profiles(username)')
+          .select('id, title, score, profiles!posts_author_id_fkey(username)')
           .eq('is_deleted', false)
           .gte('created_at', sevenDaysAgo)
           .order('score', { ascending: false })

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase'
+import { Link } from 'react-router-dom';
 
 function LatestPosts() {
 
@@ -42,7 +43,8 @@ function LatestPosts() {
       <ul>
         {posts.map(p => (
           <li key={p.id}>
-            <span>{p.title}{p.likes}</span>
+            <span><Link to={`/posts/${p.id}`}>{p.title}</Link></span>
+            
             <small>
               by {p.author?.username} –{' '}
               {new Date(p.created_at).toLocaleDateString()}
