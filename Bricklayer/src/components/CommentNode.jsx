@@ -178,9 +178,8 @@ export default function CommentNode({ comment, postId, depth = 0, refreshComment
                                         await deleteComment(comment.id);
                                         refreshComments();
                                     } catch {
-                                        setDeleteError(null);
+                                        setDeleteError('Failed to delete comment.');
                                     }
-                                    setDeleteError('Failed to delete comment.');
                                 }}
                                 style={{ marginLeft: 4, color: 'red' }}
                                 disabled={deleting}

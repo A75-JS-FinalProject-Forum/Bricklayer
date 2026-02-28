@@ -95,8 +95,6 @@ export default function PostDetail() {
         fetchData();
     }, [id, fetchComments])
 
-
-
     // Sync displayScore when post loads
     useEffect(() => {
         if (post) setDisplayScore(post.score);
@@ -314,7 +312,9 @@ export default function PostDetail() {
                     {deleteError && <div style={{ color: 'red', marginTop: 8 }}>{deleteError}</div>}
                 </>
             )}
+
             <hr />
+            
             <h3>Comments</h3>
 
             <textarea
