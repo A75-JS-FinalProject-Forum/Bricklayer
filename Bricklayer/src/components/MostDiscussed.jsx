@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase'
+import { Link } from 'react-router-dom';
 
 function MostDiscussed() {
   const [posts, setPosts] = useState([]);
@@ -23,7 +24,7 @@ function MostDiscussed() {
       <ul>
         {posts.map(p => (
           <li key={p.id}>
-            {p.title} -- {p.comments_count} comments
+            <Link to={`/posts/${p.id}`}>{p.title}</Link> -- {p.comments_count} comments
           </li>
         ))}
       </ul>
