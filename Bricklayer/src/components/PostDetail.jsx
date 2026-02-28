@@ -209,7 +209,7 @@ export default function PostDetail() {
                             {authorName}
                         </Link>
                     </p>
-                    <p>Категория: {post.categories?.name}</p>
+                    <p>Категория: <Link to={`/category/${post.categories?.slug}`}>{post.categories?.name}</Link></p>
                     {tags.length > 0 && (
                         <div style={{ marginBottom: 8 }}>
                             {tags.map(tag => (
