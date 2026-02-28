@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../context/useAuth.js';
 import { userService } from '../services/userService.js';
 import { authService } from '../services/authService.js';
@@ -143,7 +143,7 @@ export default function ProfilePage() {
                 <input type="text" name="last_name" value={editData.last_name} onChange={handleChange} className="form-input" />
               </div>
               <div className="btn-group">
-                <button type="submit" disabled={loading} className="btn btn-primary">Запази</button>
+                <button type="submit" disabled={loading} className="btn btn-primary">Save</button>
                 <button type="button" onClick={() => setIsEditing(false)} disabled={loading} className="btn btn-secondary">Close</button>
               </div>
             </form>

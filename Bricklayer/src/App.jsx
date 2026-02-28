@@ -10,13 +10,14 @@ import PostDetail from './components/PostDetail'
 import TagPage from './pages/TagPage'
 import { useAuth } from './context/useAuth'
 import ProfilePage from './pages/ProfilePage'
+import PublicProfilePage from './pages/PublicProfilePage'
 import UserManagement from './pages/admin/UserManagement'
 
 function AppRoutes() {
   const { user, loading } = useAuth(); 
 
   if (loading) {
-    return <div>Зареждане...</div>;
+    return <div>loading...</div>;
   }
 
   return (
@@ -39,6 +40,13 @@ function AppRoutes() {
           path="/create" 
           element={user ? <CreatePost /> : <Navigate to="/login" />} 
         />
+      
+
+        <Route 
+          path="/profile/:username"
+          element={<PublicProfilePage />}
+        />
+        
         <Route 
           path="/profile" 
           element={user ? <ProfilePage /> : <Navigate to="/login" />} 

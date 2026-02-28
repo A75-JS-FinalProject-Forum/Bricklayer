@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
-import { castCommentVote, removeCommentVote, getUserCommentVote } from '../services/voteService';
-import { updateComment, deleteComment } from '../services/commentService';
+import { Link } from 'react-router-dom';
+import { supabase } from '../lib/supabase.js';
+import { castCommentVote, removeCommentVote, getUserCommentVote } from '../services/voteService.js';
+import { updateComment, deleteComment } from '../services/commentService.js';
 
 export default function CommentNode({ comment, postId, depth = 0, refreshComments, user }) {
     const isAuthor = user && comment.author_id === user.id;
@@ -45,24 +46,24 @@ export default function CommentNode({ comment, postId, depth = 0, refreshComment
 
     const handleReply = async () => {
         if (!user) {
-            setError('You must be logged in to reply.');
+            setError('Трябва да сте влезли, за да отговорите.');
             return;
         }
         if (!replyText.trim()) {
-            setError('Reply cannot be empty.');
+            setError('Коментарът не може да бъде празен.');
             return;
         }
         if (replyText.length > 500) {
-            setError('Reply is too long (max 500 characters).');
+            setError('Коментарът е твърде дълъг (макс. 500 символа).');
             return;
         }
         setSubmitting(true);
         setError(null);
 
-        // Simple forbidden content check
+        // Проверка за забранено съдържание
         const forbiddenWords = ['spam', 'offensive'];
         if (forbiddenWords.some(word => replyText.toLowerCase().includes(word))) {
-            setError('Reply contains forbidden content.');
+            setError('Коментарът съдържа забранено съдържание.');
             setSubmitting(false);
             return;
         }
@@ -87,24 +88,32 @@ export default function CommentNode({ comment, postId, depth = 0, refreshComment
         }
     };
 
+    const username = comment.profiles?.username || 'Unknown';
+
     return (
         <div style={{ marginLeft: depth * 20, marginTop: 10 }}>
             <div className="comment">
-                <strong>{comment.profiles?.username}</strong>
+                <Link 
+                    to={`/profile/${username}`} 
+                    style={{ fontWeight: 'bold', textDecoration: 'none', color: '#1d4ed8' }}
+                >
+                    {username}
+                </Link>
+
                 {editing ? (
                     <>
                         <textarea
                             value={editText}
                             onChange={e => setEditText(e.target.value)}
                             rows={3}
-                            style={{ width: '100%' }}
+                            style={{ width: '100%', marginTop: 8 }}
                         />
                         <br />
                         <button
                             onClick={async () => {
                                 setEditError(null);
                                 if (!editText.trim()) {
-                                    setEditError('Comment cannot be empty.');
+                                    setEditError('Коментарът не може да бъде празен.');
                                     return;
                                 }
                                 try {
@@ -112,21 +121,22 @@ export default function CommentNode({ comment, postId, depth = 0, refreshComment
                                     setEditing(false);
                                     refreshComments();
                                 } catch {
-                                    setEditError('Failed to update comment.');
+                                    setEditError('Грешка при обновяване.');
                                 }
                             }}
                             style={{ marginRight: 8 }}
-                        >Save</button>
+                        >Запази</button>
 
                         <button onClick={() => { setEditing(false); setEditText(comment.content); }}>
-                            Cancel
+                            Отказ
                         </button>
 
                         {editError && <div style={{ color: 'red', marginTop: 4 }}>{editError}</div>}
                     </>
                 ) : (
-                    <p>{comment.content}</p>
+                    <p style={{ marginTop: 5 }}>{comment.content}</p>
                 )}
+
                 <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                     <button
                         onClick={() => handleVote(1)}
@@ -158,55 +168,58 @@ export default function CommentNode({ comment, postId, depth = 0, refreshComment
                         ▼
                     </button>
                 </div>
-                <div>
+
+                <div style={{ marginTop: 5 }}>
                     <button onClick={() => setShowReply(!showReply)} disabled={!user}>
-                        Reply
+                        Отговори
                     </button>
                     {isAuthor && !editing && (
                         <>
                             <button
                                 onClick={() => setEditing(true)}
                                 style={{ marginLeft: 8 }}
-                            >Edit</button>
+                            >Редактирай</button>
                             <button
                                 onClick={async () => {
                                     setDeleteError(null);
 
-                                    if (!window.confirm('Delete this comment?')) return;
+                                    if (!window.confirm('Изтрий коментара?')) return;
                                     setDeleting(true);
                                     try {
                                         await deleteComment(comment.id);
                                         refreshComments();
                                     } catch {
-                                        setDeleteError('Failed to delete comment.');
+                                        setDeleteError('Грешка при изтриване.');
                                     }
                                 }}
                                 style={{ marginLeft: 4, color: 'red' }}
                                 disabled={deleting}
-                            >{deleting ? 'Deleting...' : 'Delete'}
+                            >{deleting ? 'Изтриване...' : 'Изтрий'}
                             </button>
                             {deleteError && <div style={{ color: 'red', marginTop: 4 }}>{deleteError}</div>}
                         </>
                     )}
                 </div>
+
                 {showReply && (
                     <div style={{ marginTop: 8 }}>
                         <textarea
                             value={replyText}
                             onChange={(e) => setReplyText(e.target.value)}
                             rows={3}
-                            placeholder="Write your reply..."
+                            placeholder="Напиши отговор..."
                             maxLength={500}
+                            style={{ width: '100%' }}
                         />
                         <br />
                         <button onClick={handleReply} disabled={submitting}>
-                            {submitting ? 'Posting...' : 'Post Reply'}
+                            {submitting ? 'Изпращане...' : 'Публикувай отговор'}
                         </button>
                         {error && <div style={{ color: 'red', marginTop: 4 }}>{error}</div>}
                     </div>
                 )}
             </div>
-            {comment.children.map(child => (
+            {comment.children && comment.children.map(child => (
                 <CommentNode
                     key={child.id}
                     comment={child}
