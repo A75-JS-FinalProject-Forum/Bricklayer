@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { Link } from 'react-router-dom'
 
 export default function CategoryPage() {
   const { slug } = useParams()
@@ -31,7 +32,7 @@ export default function CategoryPage() {
       <h2>{slug}</h2>
       {posts.map(post => (
         <div key={post.id}>
-          {post.title}
+          <Link to={`/posts/${post.id}`}>{post.title}</Link>
         </div>
       ))}
     </div>

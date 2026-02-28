@@ -70,7 +70,7 @@ export async function getPostById(id) {
 
   const { data, error } = await supabase
     .from('posts')
-    .select('*, profiles!posts_author_id_fkey(username)')
+    .select('*, profiles!posts_author_id_fkey(username), categories(name)')
     .eq('id', id)
     .single();
 
