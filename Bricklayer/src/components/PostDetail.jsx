@@ -314,7 +314,7 @@ export default function PostDetail() {
             )}
 
             <hr />
-            
+
             <h3>Comments</h3>
 
             <textarea
