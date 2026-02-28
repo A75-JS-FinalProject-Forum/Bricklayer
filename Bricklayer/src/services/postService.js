@@ -6,7 +6,7 @@ export async function getTotalPosts() {
   const { count, error } = await supabase
     .from('posts')
     .select('id', { count: 'exact', head: true });
-    
+
   if (error) throw new Error(error.message);
   return count;
 
@@ -22,7 +22,7 @@ export function validatePost({ title, content }) {
   if (!content || content.length < 32 || content.length > 8192) {
     return 'Content must be between 32 and 8192 characters.';
   }
-  
+
   return null;
 }
 
@@ -85,11 +85,11 @@ export async function getPostById(id) {
 export async function updatePost(id, updates) {
 
   const { data, error } = await supabase
-  .from('posts')
-  .update({ ...updates, updated_at: new Date().toISOString() })
-  .eq('id', id)
-  .select()
-  .maybeSingle();
+    .from('posts')
+    .update({ ...updates, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .maybeSingle();
 
   if (error) {
     throw error;
@@ -103,12 +103,12 @@ export async function deletePost(id) {
 
   const { error } = await supabase
     .from('posts')
-    .delete()
-    .eq('id', id);
+    .update({ is_deleted: true })
+    .eq('id', id)
 
   if (error) {
     throw error;
   }
-  
+
   return true;
 }
