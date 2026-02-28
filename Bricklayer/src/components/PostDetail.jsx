@@ -235,6 +235,7 @@ export default function PostDetail() {
                 <>
                     <h2>{post.title}</h2>
                     <p>by {post.profiles?.username || 'Unknown author'}</p>
+                    <p>Category: {post.categories?.name}</p>
                     {tags.length > 0 && (
                         <div style={{ marginBottom: 8 }}>
                             {tags.map(tag => (
