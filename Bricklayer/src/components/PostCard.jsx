@@ -32,8 +32,6 @@ export default function PostCard({ post, user }) {
         }
     };
 
-    const authorName = post.profiles?.username || 'Unknown author';
-
     return (
         <div className="post-card">
             <h3>
@@ -42,12 +40,7 @@ export default function PostCard({ post, user }) {
                 </Link>
             </h3>
             <p>
-                by <Link 
-                    to={`/profile/${authorName}`} 
-                    style={{ fontWeight: 'bold', textDecoration: 'none', color: '#dc2626' }}
-                   >
-                    {authorName}
-                </Link>
+                by {post.profiles?.username ? <Link to={`/profile/${post.profiles.username}`} style={{ color: 'inherit' }}>{post.profiles.username}</Link> : 'Unknown author'}
                 {post.categories && (
                     <> in {post.categories.name}</>
                 )}
