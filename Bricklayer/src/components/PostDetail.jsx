@@ -1,6 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useEffect, useState, useCallback } from 'react'
-import { supabase } from '../lib/supabase'
 import { getPostById, updatePost } from '../services/postService'
 import { createComment, getCommentsByPostId } from '../services/commentService'
 import { castPostVote, removePostVote, getUserPostVote } from '../services/voteService'
@@ -9,10 +8,12 @@ import CommentNode from './CommentNode'
 import { buildCommentTree } from '../utils/commentTree'
 import { deletePost } from '../services/postService'
 import { Link } from 'react-router-dom'
+import { useAuth } from '../context/useAuth';
+
 
 export default function PostDetail() {
 
-    const { id } = useParams()
+    const { id } = useParams();
     const navigate = useNavigate();
     const [deleting, setDeleting] = useState(false);
     const [deleteError, setDeleteError] = useState(null);
@@ -31,10 +32,12 @@ export default function PostDetail() {
     const [commentsLoading, setCommentsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [commentsError, setCommentsError] = useState(null);
-    const [user, setUser] = useState(null);
     const [userVote, setUserVote] = useState(null);
     const [displayScore, setDisplayScore] = useState(0);
     const [tags, setTags] = useState([]);
+
+    // Use useAuth hook at the top level
+    const { user } = useAuth();
 
     const handleAddComment = async () => {
         if (!comment.trim() || !user) return;
@@ -46,18 +49,6 @@ export default function PostDetail() {
             setCommentsError('Failed to add comment.');
         }
     };
-
-    useEffect(() => {
-        const loadUser = async () => {
-            try {
-                const { data: { user } } = await supabase.auth.getUser();
-                setUser(user);
-            } catch {
-                setUser(null);
-            }
-        };
-        loadUser();
-    }, [])
 
     // ...CommentNode extracted to its own file...
     const fetchComments = useCallback(async () => {
