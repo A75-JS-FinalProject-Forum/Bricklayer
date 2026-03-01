@@ -7,7 +7,6 @@ import { getTagsByPostId, addTagToPost, removeTagFromPost } from '../services/ta
 import CommentNode from './CommentNode'
 import { buildCommentTree } from '../utils/commentTree'
 import { deletePost } from '../services/postService'
-import { Link } from 'react-router-dom'
 import { useAuth } from '../context/useAuth';
 
 
