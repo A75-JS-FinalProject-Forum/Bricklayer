@@ -22,7 +22,7 @@ export const createComment = async (post_id, parent_id, author_id, content) => {
             {
                 content,
                 post_id,
-                parent_id: null,
+                parent_id,
                 author_id,
                 score: 0,
                 is_deleted: false,
