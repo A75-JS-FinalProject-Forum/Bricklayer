@@ -169,7 +169,7 @@ export default function PostDetail() {
             return;
         }
         try {
-            const updated = await updatePost(id, { title: editTitle, content: editContent });
+            const updated = await updatePost(id, { title: editTitle, content: editContent }, { asAdmin: isAdmin && !isAuthor });
 
             const originalNames = new Set(tags.map(t => t.name));
             const editNames = new Set(editTags.map(t => t.name));
@@ -209,7 +209,7 @@ export default function PostDetail() {
         setDeleteError(null);
 
         try {
-            await deletePost(id);
+            await deletePost(id, { asAdmin: isAdmin && !isAuthor });
             navigate('/');
         } catch (err) {
             setDeleteError(err.message || 'Failed to delete post.');

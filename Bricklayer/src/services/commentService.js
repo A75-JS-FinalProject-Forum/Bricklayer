@@ -36,7 +36,13 @@ export const createComment = async (post_id, parent_id, author_id, content) => {
 }
 
 // Update a comment's content
-export const updateComment = async (id, content) => {
+export const updateComment = async (id, content, { asAdmin = false } = {}) => {
+
+    if (asAdmin) {
+        const { error } = await supabase.rpc('admin_update_comment', { target_id: id, new_content: content });
+        if (error) throw error;
+        return true;
+    }
 
     const { data, error } = await supabase
         .from('comments')
@@ -50,7 +56,13 @@ export const updateComment = async (id, content) => {
 }
 
 // Soft delete a comment
-export const deleteComment = async (id) => {
+export const deleteComment = async (id, { asAdmin = false } = {}) => {
+
+    if (asAdmin) {
+        const { error } = await supabase.rpc('admin_delete_comment', { target_id: id });
+        if (error) throw error;
+        return true;
+    }
 
     const { error } = await supabase
         .from('comments')

@@ -118,7 +118,7 @@ export default function CommentNode({ comment, postId, depth = 0, refreshComment
                                     return;
                                 }
                                 try {
-                                    await updateComment(comment.id, editText);
+                                    await updateComment(comment.id, editText, { asAdmin: isAdmin && !isAuthor });
                                     setEditing(false);
                                     refreshComments();
                                 } catch {
@@ -171,7 +171,7 @@ export default function CommentNode({ comment, postId, depth = 0, refreshComment
                                     if (!window.confirm('Delete this comment?')) return;
                                     setDeleting(true);
                                     try {
-                                        await deleteComment(comment.id);
+                                        await deleteComment(comment.id, { asAdmin: isAdmin && !isAuthor });
                                         refreshComments();
                                     } catch {
                                         setDeleteError('Failed to delete comment.');

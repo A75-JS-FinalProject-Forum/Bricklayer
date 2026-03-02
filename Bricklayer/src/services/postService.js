@@ -92,7 +92,17 @@ export async function getPostById(id) {
 }
 
 // UPDATE a post by ID
-export async function updatePost(id, updates) {
+export async function updatePost(id, updates, { asAdmin = false } = {}) {
+
+  if (asAdmin) {
+    const { error } = await supabase.rpc('admin_update_post', {
+      target_id: id,
+      new_title: updates.title,
+      new_content: updates.content,
+    });
+    if (error) throw error;
+    return await getPostById(id);
+  }
 
   const { data, error } = await supabase
     .from('posts')
@@ -109,7 +119,13 @@ export async function updatePost(id, updates) {
 }
 
 // DELETE a post by ID
-export async function deletePost(id) {
+export async function deletePost(id, { asAdmin = false } = {}) {
+
+  if (asAdmin) {
+    const { error } = await supabase.rpc('admin_delete_post', { target_id: id });
+    if (error) throw error;
+    return true;
+  }
 
   const { error } = await supabase
     .from('posts')
