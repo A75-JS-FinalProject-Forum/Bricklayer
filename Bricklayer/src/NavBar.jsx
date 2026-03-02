@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
-import { useAuth } from './context/useAuth';
+import { useAuth } from './context/useAuth.js';
 import { useEffect, useState } from 'react';
-import { userService } from './services/userService';
+import { userService } from './services/userService.js';
+import QuickSearch from './components/QuickSearch.jsx';
 
 export default function NavBar() {
     const { user, logout } = useAuth()
@@ -17,7 +18,7 @@ export default function NavBar() {
                 const profile = await userService.getProfile(user.id);
                 setIsAdmin(profile?.is_admin || false);
             } catch (error) {
-                console.error("Грешка при проверка на правата:", error);
+                console.error("Error when checking privileges: ", error);
                 setIsAdmin(false);
             }
         };
@@ -28,20 +29,23 @@ export default function NavBar() {
     return (
         <nav className="navbar">
             <strong>The BrickLayer</strong>
+            
+            <QuickSearch />
+
             <div className="navbar-links">
                 <Link to="/">Feed</Link>
                 {user && <Link to="/create">Create Post</Link>}
                 {user && <Link to="/profile">Profile</Link>}
 
                 {isAdmin && (
-                    <Link to="/admin/users">
+                    <Link to="/admin/users" className="admin-link">
                         Admin Panel
                     </Link>
                 )}
             </div>
             <div className="navbar-auth">
                 {user ? (
-                    <button onClick={logout}>Logout</button>
+                    <button onClick={logout} className="logout-btn">Logout</button>
                 ) : (
                     <>
                         <Link to="/login">Login</Link>

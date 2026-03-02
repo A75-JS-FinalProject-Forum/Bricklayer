@@ -12,7 +12,7 @@ import { useAuth } from './context/useAuth'
 import ProfilePage from './pages/ProfilePage'
 import PublicProfilePage from './pages/PublicProfilePage'
 import UserManagement from './pages/admin/UserManagement'
-
+import SearchResultsPage from './pages/SearchResultPage';
 function AppRoutes() {
   const { user, loading } = useAuth(); 
 
@@ -41,6 +41,10 @@ function AppRoutes() {
           element={user ? <CreatePost /> : <Navigate to="/login" />} 
         />
       
+        <Route 
+          path="/search" 
+          element={<SearchResultsPage />} 
+        />
 
         <Route 
           path="/profile/:username"
