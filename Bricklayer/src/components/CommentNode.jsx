@@ -31,12 +31,16 @@ export default function CommentNode({ comment, postId, depth = 0, refreshComment
         if (!user) return;
         try {
             if (userVote === voteType) {
+                // Remove vote, revert score by previous vote value
                 await removeCommentVote(user.id, comment.id);
-                setDisplayScore(prev => prev - voteType);
+                if (userVote) {
+                    setDisplayScore(prev => prev - userVote);
+                }
                 setUserVote(null);
             } else {
                 await castCommentVote(user.id, comment.id, voteType);
-                const scoreDelta = userVote ? voteType - userVote : voteType;
+                // If there was a previous vote, subtract it and add new vote
+                const scoreDelta = (userVote ? voteType - userVote : voteType);
                 setDisplayScore(prev => prev + scoreDelta);
                 setUserVote(voteType);
             }
