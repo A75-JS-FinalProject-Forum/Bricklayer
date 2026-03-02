@@ -1,13 +1,13 @@
 .comments-divider {
   border: 0;
   height: 2px;
-  background-color: #e2e8f0;
+  background-color: var(--lego-border);
   margin: 2rem 0;
 }
 
 .comments-header {
   font-size: 1.5rem;
-  color: #0f172a;
+  color: var(--lego-text);
   margin-bottom: 1rem;
   font-weight: 800;
 }
@@ -16,53 +16,55 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  background-color: #f8fafc;
+  background-color: var(--lego-bg-elevated);
   padding: 1.25rem;
   border-radius: 8px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--lego-border);
   margin-bottom: 2rem;
-  box-shadow: 4px 4px 0px 0px #e2e8f0; 
+  box-shadow: 4px 4px 0px 0px var(--lego-border);
 }
 
 .comment-textarea {
   width: 100%;
   min-height: 80px;
   padding: 0.75rem;
-  border: 2px solid #cbd5e1;
+  border: 2px solid var(--lego-input-border);
   border-radius: 6px;
   font-family: inherit;
   font-size: 1rem;
+  color: var(--lego-text);
+  background: var(--lego-input-bg);
   resize: vertical;
   outline: none;
   transition: all 0.2s ease;
 }
 
 .comment-textarea:focus {
-  border-color: #facc15; 
+  border-color: var(--lego-yellow);
   box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.2);
 }
 
 .comment-submit-btn {
   align-self: flex-start;
-  background-color: #1d4ed8; 
+  background-color: var(--lego-blue);
   color: white;
   font-weight: bold;
   padding: 0.5rem 1.5rem;
-  border: 2px solid #1e3a8a;
+  border: 2px solid var(--lego-blue-hover);
   border-radius: 6px;
   cursor: pointer;
   font-size: 1rem;
-  box-shadow: 3px 3px 0px 0px #1e3a8a; 
+  box-shadow: 3px 3px 0px 0px var(--lego-blue-hover);
   transition: all 0.1s ease;
 }
 
 .comment-submit-btn:hover {
-  background-color: #2563eb;
+  background-color: var(--lego-blue-hover);
   transform: translate(-1px, -1px);
-  box-shadow: 4px 4px 0px 0px #1e3a8a;
+  box-shadow: 4px 4px 0px 0px var(--lego-blue-hover);
 }
 
 .comment-submit-btn:active {
   transform: translate(3px, 3px);
-  box-shadow: 0px 0px 0px 0px #1e3a8a;
+  box-shadow: 0px 0px 0px 0px var(--lego-blue-hover);
 }
