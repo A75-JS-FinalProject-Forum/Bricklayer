@@ -10,6 +10,7 @@ import { buildCommentTree } from '../utils/commentTree'
 import { deletePost } from '../services/postService'
 import { Link } from 'react-router-dom'
 import { userService } from '../services/userService'
+import '../styles/comments.css'
 
 export default function PostDetail() {
 
@@ -341,18 +342,24 @@ export default function PostDetail() {
                 </>
             )}
 
-            <hr />
+            <hr className="comments-divider" />
 
-            <h3>Comments</h3>
+            <h3 className="comments-header">Comments</h3>
 
-            <textarea
-                name="submit-comment"
-                id="submit"
-                value={comment}
-                onChange={e => setComment(e.target.value)}
-            />
+            <div className="comment-input-container">
+                <textarea
+                    className="comment-textarea"
+                    name="submit-comment"
+                    id="submit"
+                    placeholder="Write your comment..."
+                    value={comment}
+                    onChange={e => setComment(e.target.value)}
+                />
 
-            <button onClick={handleAddComment}>Comment</button>
+                <button className="comment-submit-btn" onClick={handleAddComment}>
+                    Comment
+                </button>
+            </div>
 
             {commentsLoading ? (
                 <div className="loading-text">Loading comments...</div>
@@ -361,16 +368,18 @@ export default function PostDetail() {
             ) : comments.length === 0 ? (
                 <div>No comments yet.</div>
             ) : (
-                comments.map(comment => (
-                    <CommentNode
-                        key={comment.id}
-                        comment={comment}
-                        postId={id}
-                        refreshComments={fetchComments}
-                        user={user}
-                        isAdmin={isAdmin}
-                    />
-                ))
+                <div className="comments-list">
+                    {comments.map(comment => (
+                        <CommentNode
+                            key={comment.id}
+                            comment={comment}
+                            postId={id}
+                            refreshComments={fetchComments}
+                            user={user}
+                            isAdmin={isAdmin}
+                        />
+                    ))}
+                </div>
             )}
         </div>
     )
