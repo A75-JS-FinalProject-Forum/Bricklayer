@@ -5,28 +5,47 @@
 --
 -- Formula:
 --   reputation = (number of non-deleted posts)
---              + (sum of scores on user's non-deleted posts)
---              + (sum of scores on user's non-deleted comments)
+--              + (sum of vote_type on user's non-deleted posts)
+--              + (sum of vote_type on user's non-deleted comments)
+--
+-- NOTE: Scores are calculated directly from the votes table,
+--       NOT from posts.score / comments.score columns.
+--       This avoids trigger ordering issues (reputation trigger
+--       fires before score-update trigger alphabetically).
 --
 -- Components:
 --   1. recalculate_reputation(target_user_id) — recomputes and updates profiles.reputation
 --   2. update_reputation_on_vote() — trigger function called after vote changes
---   3. reputation_vote_trigger — trigger on votes table (AFTER INSERT OR DELETE)
+--   3. reputation_vote_trigger — trigger on votes table (AFTER INSERT OR UPDATE OR DELETE)
 --   4. Backfill script — one-time update for all existing users
 -- ============================================================
 
 -- 1. Function: recalculate_reputation
---    Sums post count + post scores + comment scores for a user,
---    then updates their profiles.reputation.
+--    Calculates scores directly from the votes table (not from
+--    posts.score / comments.score) to avoid trigger ordering issues.
 CREATE OR REPLACE FUNCTION recalculate_reputation(target_user_id UUID)
 RETURNS VOID AS $$
 DECLARE
   new_reputation INTEGER;
 BEGIN
   SELECT COALESCE(
-    (SELECT COUNT(*)::INTEGER FROM posts WHERE author_id = target_user_id AND NOT is_deleted)
-    + (SELECT COALESCE(SUM(score), 0)::INTEGER FROM posts WHERE author_id = target_user_id AND NOT is_deleted)
-    + (SELECT COALESCE(SUM(score), 0)::INTEGER FROM comments WHERE author_id = target_user_id AND NOT is_deleted),
+    (
+      SELECT COUNT(*)::INTEGER
+      FROM posts
+      WHERE author_id = target_user_id AND NOT is_deleted
+    )
+    + (
+      SELECT COALESCE(SUM(v.vote_type), 0)::INTEGER
+      FROM votes v
+      JOIN posts p ON v.post_id = p.id
+      WHERE p.author_id = target_user_id AND NOT p.is_deleted
+    )
+    + (
+      SELECT COALESCE(SUM(v.vote_type), 0)::INTEGER
+      FROM votes v
+      JOIN comments c ON v.comment_id = c.id
+      WHERE c.author_id = target_user_id AND NOT c.is_deleted
+    ),
     0
   ) INTO new_reputation;
 
@@ -45,7 +64,7 @@ DECLARE
   target_author_id UUID;
   vote_row RECORD;
 BEGIN
-  -- Use NEW for INSERT, OLD for DELETE
+  -- Use NEW for INSERT/UPDATE, OLD for DELETE
   IF TG_OP = 'DELETE' THEN
     vote_row := OLD;
   ELSE
