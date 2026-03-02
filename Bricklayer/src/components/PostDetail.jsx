@@ -284,7 +284,7 @@ export default function PostDetail() {
                 <>
                     <h2>{post.title}</h2>
                     <p>by {post.profiles?.username ? <Link to={`/profile/${post.profiles.username}`} className="author-link">{post.profiles.username}</Link> : 'Unknown author'}</p>
-                    <p>Category: {post.categories?.name}</p>
+                    <p>Category: <Link to={`/category/${post.categories?.slug}`} className="author-link">{post.categories?.name}</Link></p>
                     {tags.length > 0 && (
                         <div className="tags-display">
                             {tags.map(tag => (
