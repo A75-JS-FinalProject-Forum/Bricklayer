@@ -5,7 +5,8 @@ export async function getTotalPosts() {
 
   const { count, error } = await supabase
     .from('posts')
-    .select('id', { count: 'exact', head: true });
+    .select('id', { count: 'exact', head: true })
+    .eq('is_deleted', false);
 
   if (error) throw new Error(error.message);
   return count;
@@ -51,12 +52,20 @@ export async function createPost({ author_id, category_id, title, content }) {
 }
 
 // READ all posts
-export async function getPosts() {
+export async function getPosts(sortBy = 'created_at', categoryId = null) {
+  const validSorts = ['created_at', 'comments_count', 'score'];
+  const orderColumn = validSorts.includes(sortBy) ? sortBy : 'created_at';
 
-  const { data, error } = await supabase
+  let query = supabase
     .from('posts')
-    .select('*, profiles(username), categories(name, slug)')
-    .order('created_at', { ascending: false });
+    .select('*, profiles!posts_author_id_fkey(username), categories(name, slug)')
+    .eq('is_deleted', false);
+
+  if (categoryId) {
+    query = query.eq('category_id', categoryId);
+  }
+
+  const { data, error } = await query.order(orderColumn, { ascending: false });
 
   if (error) {
     throw error;
@@ -72,6 +81,7 @@ export async function getPostById(id) {
     .from('posts')
     .select('*, profiles!posts_author_id_fkey(username), categories(name, slug)')
     .eq('id', id)
+    .eq('is_deleted', false)
     .single();
 
   if (error) {

@@ -5,6 +5,7 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import CategoryPage from './pages/CategoryPage'
 import { AuthProvider } from './context/AuthContext'
+import { ThemeProvider } from './context/ThemeContext'
 import CreatePost from './pages/CreatePost'
 import PostDetail from './components/PostDetail'
 import TagPage from './pages/TagPage'
@@ -12,7 +13,8 @@ import { useAuth } from './context/useAuth'
 import ProfilePage from './pages/ProfilePage'
 import PublicProfilePage from './pages/PublicProfilePage'
 import UserManagement from './pages/admin/UserManagement'
-import SearchResultsPage from './pages/SearchResultPage';
+import SearchResultPage from './pages/SearchResultPage'
+
 function AppRoutes() {
   const { user, loading } = useAuth(); 
 
@@ -64,6 +66,7 @@ function AppRoutes() {
         <Route path="/category/:slug" element={<CategoryPage />} />
         <Route path="/posts/:id" element={<PostDetail />} />
         <Route path="/tags/:name" element={<TagPage />} />
+        <Route path="/search" element={<SearchResultPage />} />
 
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
@@ -74,11 +77,13 @@ function AppRoutes() {
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

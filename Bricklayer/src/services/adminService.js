@@ -27,14 +27,34 @@ export const adminService = {
     },
 
     async toggleAdmin(userId, currentStatus) {
-        if (!userId) return new Error('Invalid user ID') 
+        if (!userId) return new Error('Invalid user ID')
         const {data , error} = await supabase
             .from('profiles')
             .update({'is_admin': !currentStatus})
             .eq('id', String(userId))
             .select()
-            
+
         if (!data || data.length === 0 || error) throw error;
         return data[0];
+    },
+
+    async getUserActivity(userId) {
+        const [postsResult, commentsResult] = await Promise.all([
+            supabase
+                .from('posts')
+                .select('id', { count: 'exact', head: true })
+                .eq('author_id', userId)
+                .eq('is_deleted', false),
+            supabase
+                .from('comments')
+                .select('id', { count: 'exact', head: true })
+                .eq('author_id', userId)
+                .eq('is_deleted', false),
+        ]);
+
+        return {
+            postsCount: postsResult.count ?? 0,
+            commentsCount: commentsResult.count ?? 0,
+        };
     }
 }

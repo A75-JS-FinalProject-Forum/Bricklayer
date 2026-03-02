@@ -4,8 +4,9 @@ import { supabase } from '../lib/supabase';
 import { castCommentVote, removeCommentVote, getUserCommentVote } from '../services/voteService';
 import { updateComment, deleteComment } from '../services/commentService';
 
-export default function CommentNode({ comment, postId, depth = 0, refreshComments, user }) {
+export default function CommentNode({ comment, postId, depth = 0, refreshComments, user, isAdmin = false }) {
     const isAuthor = user && comment.author_id === user.id;
+    const canModify = isAuthor || isAdmin;
     const [editing, setEditing] = useState(false);
     const [editText, setEditText] = useState(comment.content);
     const [editError, setEditError] = useState(null);
@@ -30,12 +31,16 @@ export default function CommentNode({ comment, postId, depth = 0, refreshComment
         if (!user) return;
         try {
             if (userVote === voteType) {
+                // Remove vote, revert score by previous vote value
                 await removeCommentVote(user.id, comment.id);
-                setDisplayScore(prev => prev - voteType);
+                if (userVote) {
+                    setDisplayScore(prev => prev - userVote);
+                }
                 setUserVote(null);
             } else {
                 await castCommentVote(user.id, comment.id, voteType);
-                const scoreDelta = userVote ? voteType - userVote : voteType;
+                // If there was a previous vote, subtract it and add new vote
+                const scoreDelta = (userVote ? voteType - userVote : voteType);
                 setDisplayScore(prev => prev + scoreDelta);
                 setUserVote(voteType);
             }
@@ -92,7 +97,7 @@ export default function CommentNode({ comment, postId, depth = 0, refreshComment
             <div className="comment">
                 <strong>
                     {comment.profiles?.username ? (
-                        <Link to={`/profile/${comment.profiles.username}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                        <Link to={`/profile/${comment.profiles.username}`} className="author-link">
                             {comment.profiles.username}
                         </Link>
                     ) : 'Unknown'}
@@ -103,7 +108,6 @@ export default function CommentNode({ comment, postId, depth = 0, refreshComment
                             value={editText}
                             onChange={e => setEditText(e.target.value)}
                             rows={3}
-                            style={{ width: '100%' }}
                         />
                         <br />
                         <button
@@ -128,38 +132,24 @@ export default function CommentNode({ comment, postId, depth = 0, refreshComment
                             Cancel
                         </button>
 
-                        {editError && <div style={{ color: 'red', marginTop: 4 }}>{editError}</div>}
+                        {editError && <div className="error-inline">{editError}</div>}
                     </>
                 ) : (
                     <p>{comment.content}</p>
                 )}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                <div className="vote-controls--sm" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                     <button
                         onClick={() => handleVote(1)}
                         disabled={!user}
-                        style={{
-                            background: 'none',
-                            border: 'none',
-                            cursor: user ? 'pointer' : 'default',
-                            fontSize: 12,
-                            opacity: userVote === 1 ? 1 : 0.4,
-                            padding: '0 2px'
-                        }}
+                        className={`vote-btn vote-btn--sm${userVote === 1 ? ' active' : ''}`}
                     >
                         ▲
                     </button>
-                    <small style={{ fontWeight: 'bold' }}>{displayScore}</small>
+                    <small className="vote-score--sm" style={{ fontWeight: 'bold' }}>{displayScore}</small>
                     <button
                         onClick={() => handleVote(-1)}
                         disabled={!user}
-                        style={{
-                            background: 'none',
-                            border: 'none',
-                            cursor: user ? 'pointer' : 'default',
-                            fontSize: 12,
-                            opacity: userVote === -1 ? 1 : 0.4,
-                            padding: '0 2px'
-                        }}
+                        className={`vote-btn vote-btn--sm${userVote === -1 ? ' active' : ''}`}
                     >
                         ▼
                     </button>
@@ -168,11 +158,11 @@ export default function CommentNode({ comment, postId, depth = 0, refreshComment
                     <button onClick={() => setShowReply(!showReply)} disabled={!user}>
                         Reply
                     </button>
-                    {isAuthor && !editing && (
+                    {canModify && !editing && (
                         <>
                             <button
                                 onClick={() => setEditing(true)}
-                                style={{ marginLeft: 8 }}
+                                className="comment-actions-gap"
                             >Edit</button>
                             <button
                                 onClick={async () => {
@@ -187,16 +177,16 @@ export default function CommentNode({ comment, postId, depth = 0, refreshComment
                                         setDeleteError('Failed to delete comment.');
                                     }
                                 }}
-                                style={{ marginLeft: 4, color: 'red' }}
+                                className="comment-delete-btn"
                                 disabled={deleting}
                             >{deleting ? 'Deleting...' : 'Delete'}
                             </button>
-                            {deleteError && <div style={{ color: 'red', marginTop: 4 }}>{deleteError}</div>}
+                            {deleteError && <div className="error-inline">{deleteError}</div>}
                         </>
                     )}
                 </div>
                 {showReply && (
-                    <div style={{ marginTop: 8 }}>
+                    <div className="comment-reply-section">
                         <textarea
                             value={replyText}
                             onChange={(e) => setReplyText(e.target.value)}
@@ -208,7 +198,7 @@ export default function CommentNode({ comment, postId, depth = 0, refreshComment
                         <button onClick={handleReply} disabled={submitting}>
                             {submitting ? 'Posting...' : 'Post Reply'}
                         </button>
-                        {error && <div style={{ color: 'red', marginTop: 4 }}>{error}</div>}
+                        {error && <div className="error-inline">{error}</div>}
                     </div>
                 )}
             </div>
@@ -220,6 +210,7 @@ export default function CommentNode({ comment, postId, depth = 0, refreshComment
                     depth={depth + 1}
                     refreshComments={refreshComments}
                     user={user}
+                    isAdmin={isAdmin}
                 />
             ))}
         </div>

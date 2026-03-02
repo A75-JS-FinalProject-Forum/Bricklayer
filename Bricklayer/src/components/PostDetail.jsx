@@ -9,6 +9,7 @@ import CommentNode from './CommentNode'
 import { buildCommentTree } from '../utils/commentTree'
 import { deletePost } from '../services/postService'
 import { Link } from 'react-router-dom'
+import { userService } from '../services/userService'
 
 export default function PostDetail() {
 
@@ -39,6 +40,14 @@ export default function PostDetail() {
 
     // Use useAuth hook at the top level
     const { user } = useAuth();
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    useEffect(() => {
+        if (!user) { setIsAdmin(false); return; }
+        userService.getProfile(user.id)
+            .then(profile => setIsAdmin(profile?.is_admin || false))
+            .catch(() => setIsAdmin(false));
+    }, [user]);
 
     const handleAddComment = async () => {
         if (!comment.trim() || !user) return;
@@ -125,7 +134,7 @@ export default function PostDetail() {
     };
 
     if (loading) {
-        return <div>Loading post...</div>
+        return <div className="loading-text">Loading post...</div>
     }
 
     if (!post) {
@@ -133,6 +142,7 @@ export default function PostDetail() {
     }
 
     const isAuthor = user && post.profiles?.username === user.user_metadata?.username;
+    const canModify = isAuthor || isAdmin;
 
     const handleEdit = () => {
         setEditTitle(post.title);
@@ -200,7 +210,7 @@ export default function PostDetail() {
 
         try {
             await deletePost(id);
-            navigate('/'); 
+            navigate('/');
         } catch (err) {
             setDeleteError(err.message || 'Failed to delete post.');
         } finally {
@@ -211,7 +221,7 @@ export default function PostDetail() {
     return (
         <div>
             {editing ? (
-                <form onSubmit={handleEditSubmit} style={{ marginBottom: 24 }}>
+                <form onSubmit={handleEditSubmit} className="form-section" style={{ marginBottom: 24 }}>
                     <h2>Edit Post</h2>
                     <div>
                         <label>Title</label><br />
@@ -219,37 +229,26 @@ export default function PostDetail() {
                             type="text"
                             value={editTitle}
                             onChange={e => setEditTitle(e.target.value)}
-                            style={{ width: '100%', padding: 8 }}
                         />
                     </div>
-                    <div style={{ marginTop: 12 }}>
+                    <div className="form-section">
                         <label>Content</label><br />
                         <textarea
                             value={editContent}
                             onChange={e => setEditContent(e.target.value)}
                             rows={6}
-                            style={{ width: '100%', padding: 8 }}
                         />
                     </div>
-                    <div style={{ marginTop: 12 }}>
+                    <div className="form-section">
                         <label>Tags (up to 5)</label><br />
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
+                        <div className="tag-row">
                             {editTags.map(tag => (
                                 <span key={tag.id ?? tag.name} className="tag-chip" style={{ cursor: 'default' }}>
                                     {tag.name}
                                     <button
                                         type="button"
                                         onClick={() => setEditTags(prev => prev.filter(t => t.name !== tag.name))}
-                                        style={{
-                                            background: 'none',
-                                            border: 'none',
-                                            cursor: 'pointer',
-                                            marginLeft: 4,
-                                            padding: 0,
-                                            fontSize: '0.85rem',
-                                            lineHeight: 1,
-                                            color: 'inherit'
-                                        }}
+                                        className="tag-remove-btn"
                                     >
                                         ✕
                                     </button>
@@ -272,35 +271,27 @@ export default function PostDetail() {
                             }}
                             placeholder={editTags.length >= 5 ? 'Max 5 tags' : 'Type a tag and press Enter'}
                             disabled={editTags.length >= 5}
-                            style={{ width: '100%', padding: 8 }}
                         />
                     </div>
-                    {editError && <div style={{ color: 'red', marginTop: 8 }}>{editError}</div>}
-                    {editSuccess && <div style={{ color: 'green', marginTop: 8 }}>{editSuccess}</div>}
-                    <button type="submit" style={{ marginTop: 16, marginRight: 8 }}>Save</button>
-                    <button type="button" onClick={handleEditCancel} style={{ marginTop: 16 }}>Cancel</button>
+                    {editError && <div className="error-inline">{editError}</div>}
+                    {editSuccess && <div className="success-inline">{editSuccess}</div>}
+                    <div className="post-actions">
+                        <button type="submit">Save</button>
+                        <button type="button" onClick={handleEditCancel}>Cancel</button>
+                    </div>
                 </form>
             ) : (
                 <>
                     <h2>{post.title}</h2>
-                    <p>by {post.profiles?.username ? <Link to={`/profile/${post.profiles.username}`} style={{ color: 'inherit' }}>{post.profiles.username}</Link> : 'Unknown author'}</p>
-                    <p>Category: {post.categories?.name}</p>
+                    <p>by {post.profiles?.username ? <Link to={`/profile/${post.profiles.username}`} className="author-link">{post.profiles.username}</Link> : 'Unknown author'}</p>
+                    <p>Category: <Link to={`/category/${post.categories?.slug}`} className="author-link">{post.categories?.name}</Link></p>
                     {tags.length > 0 && (
-                        <div style={{ marginBottom: 8 }}>
+                        <div className="tags-display">
                             {tags.map(tag => (
                                 <Link
                                     key={tag.id}
                                     to={`/tags/${tag.name}`}
-                                    style={{
-                                        display: 'inline-block',
-                                        background: '#e0e0e0',
-                                        borderRadius: 12,
-                                        padding: '2px 10px',
-                                        marginRight: 6,
-                                        fontSize: 13,
-                                        textDecoration: 'none',
-                                        color: '#333'
-                                    }}
+                                    className="tag-chip"
                                 >
                                     {tag.name}
                                 </Link>
@@ -308,57 +299,45 @@ export default function PostDetail() {
                         </div>
                     )}
                     <p>{post.content}</p>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '12px 0' }}>
+                    <div className="vote-controls">
                         <button
                             onClick={() => handleVote(1)}
                             disabled={!user}
-                            style={{
-                                background: 'none',
-                                border: 'none',
-                                cursor: user ? 'pointer' : 'default',
-                                fontSize: 20,
-                                opacity: userVote === 1 ? 1 : 0.4
-                            }}
+                            className={`vote-btn${userVote === 1 ? ' active' : ''}`}
                             title={user ? 'Upvote' : 'Log in to vote'}
                         >
                             ▲
                         </button>
-                        <span style={{ fontWeight: 'bold', fontSize: 18, minWidth: 24, textAlign: 'center' }}>
+                        <span className="vote-score">
                             {displayScore}
                         </span>
                         <button
                             onClick={() => handleVote(-1)}
                             disabled={!user}
-                            style={{
-                                background: 'none',
-                                border: 'none',
-                                cursor: user ? 'pointer' : 'default',
-                                fontSize: 20,
-                                opacity: userVote === -1 ? 1 : 0.4
-                            }}
+                            className={`vote-btn${userVote === -1 ? ' active' : ''}`}
                             title={user ? 'Downvote' : 'Log in to vote'}
                         >
                             ▼
                         </button>
                     </div>
-                    {isAuthor && (
-                        <>
+                    {canModify && (
+                        <div className="post-actions">
                             <button
                                 onClick={handleEdit}
-                                style={{ marginTop: 16, marginRight: 8, background: 'orange', color: 'white', padding: '8px 16px', border: 'none', borderRadius: 4 }}
+                                className="btn-edit"
                             >
                                 Edit Post
                             </button>
                             <button
                                 onClick={handleDelete}
                                 disabled={deleting}
-                                style={{ marginTop: 16, background: 'red', color: 'white', padding: '8px 16px', border: 'none', borderRadius: 4 }}
+                                className="btn-delete"
                             >
                                 {deleting ? 'Deleting...' : 'Delete Post'}
                             </button>
-                        </>
+                        </div>
                     )}
-                    {deleteError && <div style={{ color: 'red', marginTop: 8 }}>{deleteError}</div>}
+                    {deleteError && <div className="error-inline">{deleteError}</div>}
                 </>
             )}
 
@@ -376,9 +355,9 @@ export default function PostDetail() {
             <button onClick={handleAddComment}>Comment</button>
 
             {commentsLoading ? (
-                <div>Loading comments...</div>
+                <div className="loading-text">Loading comments...</div>
             ) : commentsError ? (
-                <div style={{ color: 'red' }}>{commentsError}</div>
+                <div className="error-inline">{commentsError}</div>
             ) : comments.length === 0 ? (
                 <div>No comments yet.</div>
             ) : (
@@ -389,6 +368,7 @@ export default function PostDetail() {
                         postId={id}
                         refreshComments={fetchComments}
                         user={user}
+                        isAdmin={isAdmin}
                     />
                 ))
             )}

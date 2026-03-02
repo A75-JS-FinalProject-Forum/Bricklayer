@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 export default function UserManagement() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  
+
   const [users, setUsers] = useState([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(0);
@@ -25,18 +25,26 @@ export default function UserManagement() {
 
       try {
         setLoading(true);
-        
+
         const profile = await userService.getProfile(user.id);
         if (!profile.is_admin) {
-          navigate('/'); 
+          navigate('/');
           return;
         }
         setIsAdmin(true);
 
         const { data, total: count } = await adminService.getAllUsers(page, limit);
-        setUsers(data);
+        const activity = await Promise.all(
+          data.map(u => adminService.getUserActivity(u.id))
+        );
+        const usersWithActivity = data.map((u, i) => ({
+          ...u,
+          postsCount: activity[i].postsCount,
+          commentsCount: activity[i].commentsCount,
+        }));
+        setUsers(usersWithActivity);
         setTotal(count);
-        
+
       } catch (error) {
         console.log(error);
       } finally {
@@ -70,7 +78,7 @@ export default function UserManagement() {
   };
 
 
-  if (!isAdmin && loading) return <div>Checking adming priviliges...</div>;
+  if (!isAdmin && loading) return <div className="loading-text">Checking admin privileges...</div>;
   if (!isAdmin) return null;
 
   const totalPages = Math.ceil(total / limit);
@@ -80,32 +88,36 @@ export default function UserManagement() {
       <h2>Command centre</h2>
       <p>Total users: {total}</p>
 
-      <table border="1" style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
+      <table className="admin-table">
         <thead>
-          <tr >
-            <th style={{ padding: '8px' }}>User</th>
-            <th style={{ padding: '8px' }}>Reputation</th>
-            <th style={{ padding: '8px' }}>Role</th>
-            <th style={{ padding: '8px' }}>Status</th>
-            <th style={{ padding: '8px' }}>Actions</th>
+          <tr>
+            <th>User</th>
+            <th>Reputation</th>
+            <th>Posts</th>
+            <th>Comments</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {loading ? (
-            <tr><td colSpan="5" style={{ padding: '20px', textAlign: 'center' }}>Loading...</td></tr>
+            <tr><td colSpan="7" className="loading-text">Loading...</td></tr>
           ) : (
             users.map(u => (
               <tr key={u.id}>
-                <td style={{ padding: '8px' }}>{u.username}</td>
-                <td style={{ padding: '8px' }}>{u.reputation}</td>
-                <td style={{ padding: '8px', color: u.is_admin ? 'red' : 'black', fontWeight: 'bold' }}>
+                <td>{u.username}</td>
+                <td>{u.reputation}</td>
+                <td>{u.postsCount ?? '—'}</td>
+                <td>{u.commentsCount ?? '—'}</td>
+                <td className={u.is_admin ? 'status-admin' : ''}>
                   {u.is_admin ? 'Admin' : 'User'}
                 </td>
-                <td style={{ padding: '8px', color: u.is_blocked ? 'red' : 'green', fontWeight: 'bold' }}>
+                <td className={u.is_blocked ? 'status-blocked' : 'status-active'}>
                   {u.is_blocked ? 'Blocked' : 'Active'}
                 </td>
-                <td style={{ padding: '8px' }}>
-                  <button onClick={() => handleToggleAdmin(u.id, u.is_admin)} disabled={u.id === user.id} style={{ marginRight: '10px' }}>
+                <td>
+                  <button onClick={() => handleToggleAdmin(u.id, u.is_admin)} disabled={u.id === user.id} style={{ marginRight: 10 }}>
                     {u.is_admin ? 'Demote' : 'Promote'}
                   </button>
                   <button onClick={() => handleToggleBlock(u.id, u.is_blocked)} disabled={u.id === user.id || u.is_admin}>
@@ -118,12 +130,12 @@ export default function UserManagement() {
         </tbody>
       </table>
 
-      <div style={{ marginTop: '20px' }}>
+      <div className="pagination">
         <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0 || loading}>
           Prev
         </button>
-        <span style={{ margin: '0 15px' }}>
-          Page {page + 1} от {totalPages || 1}
+        <span>
+          Page {page + 1} of {totalPages || 1}
         </span>
         <button onClick={() => setPage(p => p + 1)} disabled={page >= totalPages - 1 || loading}>
           Next

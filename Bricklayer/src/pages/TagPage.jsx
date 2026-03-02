@@ -9,17 +9,15 @@ export default function TagPage() {
     const { user } = useAuth();
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchPosts = async () => {
             setLoading(true);
-            setError(null);
             try {
                 const data = await getPostsByTag(name);
                 setPosts(data || []);
             } catch {
-                setError('Failed to load posts for this tag.');
+                // Tag may exist but have no posts — show empty state, not an error
                 setPosts([]);
             } finally {
                 setLoading(false);
@@ -29,7 +27,6 @@ export default function TagPage() {
     }, [name]);
 
     if (loading) return <div>Loading posts tagged "{name}"...</div>;
-    if (error) return <div style={{ color: 'red' }}>{error}</div>;
 
     return (
         <div className="tag-page">
