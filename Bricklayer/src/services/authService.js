@@ -54,7 +54,7 @@ export const authService = {
     },
 
     async updateEmail(newEmail) {
-        const {data, error} = await supabase.auth.updateUser({password: newEmail})
+        const {data, error} = await supabase.auth.updateUser({email: newEmail})
         if (error) return error;
         return data
     },

@@ -70,10 +70,10 @@ export async function removeTagFromPost(postId, tagId) {
 export async function getPostsByTag(tagName) {
   const { data, error } = await supabase
     .from('tags')
-    .select('id, name, post_tags(post_id, posts(id, title, score, comments_count, created_at, profiles(username), categories(name, slug)))')
+    .select('id, name, post_tags(post_id, posts(id, title, score, comments_count, is_deleted, created_at, profiles!posts_author_id_fkey(username), categories(name, slug)))')
     .eq('name', tagName.toLowerCase())
     .single();
 
   if (error) throw error;
-  return (data?.post_tags || []).map(pt => pt.posts);
+  return (data?.post_tags || []).map(pt => pt.posts).filter(p => !p.is_deleted);
 }

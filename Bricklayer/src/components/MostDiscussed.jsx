@@ -10,6 +10,7 @@ function MostDiscussed() {
       const { data } = await supabase
         .from('posts')
         .select('id, title, comments_count')
+        .eq('is_deleted', false)
         .order('comments_count', {ascending: false})
         .limit(10);
 

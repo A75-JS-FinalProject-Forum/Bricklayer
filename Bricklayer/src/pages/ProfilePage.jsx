@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../context/useAuth.js';
 import { userService } from '../services/userService.js';
 import { authService } from '../services/authService.js';
+import { badgeService } from '../services/badgeService.js';
 import '../styles/profile.css';
 
 export default function ProfilePage() {
@@ -10,7 +11,9 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [avatarLoading, setAvatarLoading] = useState(false);
+  const [avatarBroken, setAvatarBroken] = useState(false);
 
+  const [badges, setBadges] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({ first_name: '', last_name: '' });
   const [securityData, setSecurityData] = useState({ email: '', password: '' });
@@ -36,6 +39,13 @@ export default function ProfilePage() {
           email: user.email || '',
           password: ''
         });
+
+        try {
+          const userBadges = await badgeService.getUserBadges(user.id);
+          setBadges(userBadges);
+        } catch {
+          // Badges are non-critical; silently ignore if table doesn't exist yet
+        }
       } catch (err) {
         setError(err.message);
         console.error(err);
@@ -107,10 +117,10 @@ export default function ProfilePage() {
       
       <div className="profile-card profile-header">
         <div>
-          {profile.avatar_url ? (
-            <img src={profile.avatar_url} alt="Avatar" className="avatar-image" />
+          {profile.avatar_url && !avatarBroken ? (
+            <img src={profile.avatar_url} alt="Avatar" className="avatar-image" onError={() => setAvatarBroken(true)} />
           ) : (
-            <div className="avatar-placeholder">None</div>
+            <div className="avatar-placeholder">{profile.username?.charAt(0).toUpperCase()}</div>
           )}
         </div>
         
@@ -118,10 +128,19 @@ export default function ProfilePage() {
           <h2>{profile.username}</h2>
           <p>Registered on: {new Date(profile.created_at).toLocaleDateString()}</p>
           <p className="reputation">Reputation: {profile.reputation} </p>
+          {badges.length > 0 && (
+            <div className="badges-row">
+              {badges.map(ub => (
+                <span key={ub.badge_id} className="badge-chip" title={ub.badges?.description}>
+                  {ub.badges?.name}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="upload-action">
-          <label className={`avatar-upload-circle ${avatarLoading ? 'loading' : ''}`} title="Смени Снимката">
+          <label className={`avatar-upload-circle ${avatarLoading ? 'loading' : ''}`} title="Change photo">
             {avatarLoading ? <span className="loading-dots">...</span> : '+'}
             <input type="file" accept="image/*" hidden onChange={handleAvatarSave} disabled={avatarLoading} />
           </label>
@@ -178,7 +197,7 @@ export default function ProfilePage() {
               <input type="email" name="email" value={securityData.email} onChange={handleSecurityChange} className="form-input bg-light" />
             </div>
             <div className="form-group">
-              <label className="form-label">НNew Password</label>
+              <label className="form-label">New Password</label>
               <input type="password" name="password" placeholder="Leave blank to save it" value={securityData.password} onChange={handleSecurityChange} className="form-input" />
             </div>
             <div className="btn-group">

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from './context/useAuth';
 import { useEffect, useState } from 'react';
 import { userService } from './services/userService';
+import QuickSearch from './components/QuickSearch';
 
 export default function NavBar() {
     const { user, logout } = useAuth()
@@ -17,7 +18,7 @@ export default function NavBar() {
                 const profile = await userService.getProfile(user.id);
                 setIsAdmin(profile?.is_admin || false);
             } catch (error) {
-                console.error("Грешка при проверка на правата:", error);
+                console.error("Error checking permissions:", error);
                 setIsAdmin(false);
             }
         };
@@ -38,6 +39,7 @@ export default function NavBar() {
                         Admin Panel
                     </Link>
                 )}
+                <QuickSearch />
             </div>
             <div className="navbar-auth">
                 {user ? (

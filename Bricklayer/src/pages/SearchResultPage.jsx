@@ -46,10 +46,10 @@ export default function SearchResultsPage() {
                     <h3>Tags</h3>
                     <div>
                         {results.tags.map(tag => (
-                            <Link 
-                                key={tag.name} 
+                            <Link
+                                key={tag.name}
                                 to={`/tags/${tag.name}`}
-                                style={{ marginRight: '10px' }}
+                                className="tag-chip"
                             >
                                 #{tag.name}
                             </Link>

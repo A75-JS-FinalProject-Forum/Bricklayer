@@ -6,6 +6,7 @@ export default function CommunitySpotlight() {
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [brokenAvatars, setBrokenAvatars] = useState(new Set())
 
   useEffect(() => {
 
@@ -47,12 +48,19 @@ export default function CommunitySpotlight() {
             <span className="rank">#{index + 1}</span>
 
             <Link to={`/profile/${user.username}`}>
-              <img
-                src={user.avatar_url || '/default-avatar.png'}
-                alt={user.username}
-                width={40}
-                height={40}
-              />
+              {user.avatar_url && !brokenAvatars.has(user.id) ? (
+                <img
+                  src={user.avatar_url}
+                  alt={user.username}
+                  width={40}
+                  height={40}
+                  onError={() => setBrokenAvatars(prev => new Set(prev).add(user.id))}
+                />
+              ) : (
+                <div className="avatar-placeholder-small">
+                  {user.username?.charAt(0).toUpperCase()}
+                </div>
+              )}
             </Link>
 
             <div>

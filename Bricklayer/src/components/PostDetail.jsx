@@ -9,6 +9,7 @@ import CommentNode from './CommentNode'
 import { buildCommentTree } from '../utils/commentTree'
 import { deletePost } from '../services/postService'
 import { Link } from 'react-router-dom'
+import { userService } from '../services/userService'
 
 export default function PostDetail() {
 
@@ -39,6 +40,14 @@ export default function PostDetail() {
 
     // Use useAuth hook at the top level
     const { user } = useAuth();
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    useEffect(() => {
+        if (!user) { setIsAdmin(false); return; }
+        userService.getProfile(user.id)
+            .then(profile => setIsAdmin(profile?.is_admin || false))
+            .catch(() => setIsAdmin(false));
+    }, [user]);
 
     const handleAddComment = async () => {
         if (!comment.trim() || !user) return;
@@ -133,6 +142,7 @@ export default function PostDetail() {
     }
 
     const isAuthor = user && post.profiles?.username === user.user_metadata?.username;
+    const canModify = isAuthor || isAdmin;
 
     const handleEdit = () => {
         setEditTitle(post.title);
@@ -341,7 +351,7 @@ export default function PostDetail() {
                             ▼
                         </button>
                     </div>
-                    {isAuthor && (
+                    {canModify && (
                         <>
                             <button
                                 onClick={handleEdit}
@@ -389,6 +399,7 @@ export default function PostDetail() {
                         postId={id}
                         refreshComments={fetchComments}
                         user={user}
+                        isAdmin={isAdmin}
                     />
                 ))
             )}

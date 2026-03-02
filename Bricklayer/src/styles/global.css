@@ -484,6 +484,20 @@ form > div {
   object-fit: cover;
 }
 
+.spotlight-user .avatar-placeholder-small {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid var(--lego-yellow);
+  background: #d1d5db;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #4b5563;
+}
+
 .spotlight-user strong {
   display: block;
 }
@@ -543,6 +557,32 @@ form > div {
   background: #D0EAFB;
   text-decoration: none;
   color: var(--lego-blue-hover);
+}
+
+/* 17. Badge Chips */
+.badges-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 0.5rem;
+}
+
+.badge-chip {
+  display: inline-block;
+  background: #FFF8DC;
+  color: #8B6914;
+  border: 1px solid var(--lego-yellow);
+  border-radius: 12px;
+  padding: 2px 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: default;
+  transition: background 0.2s;
+}
+
+.badge-chip:hover {
+  background: var(--lego-yellow);
+  color: var(--lego-dark);
 }
 
 /* Create Post Page */
@@ -619,6 +659,86 @@ form > div {
   background: var(--lego-bg);
 }
 
+/* 18. QuickSearch Dropdown */
+.quick-search-container {
+  position: relative;
+}
+
+.quick-search-container input {
+  width: 180px;
+  padding: 0.35rem 0.7rem;
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  border-radius: 20px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.85rem;
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--lego-dark);
+  transition: border-color 0.2s, width 0.2s;
+}
+
+.quick-search-container input:focus {
+  width: 240px;
+  border-color: var(--lego-blue);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(0, 108, 183, 0.15);
+}
+
+.search-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 200;
+  width: 320px;
+  max-height: 400px;
+  overflow-y: auto;
+  background: var(--lego-card);
+  border: 2px solid var(--lego-border);
+  border-radius: var(--lego-radius);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  margin-top: 0.4rem;
+}
+
+.search-dropdown hr {
+  margin: 0.5rem 0;
+}
+
+.search-section p {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--lego-gray);
+  padding: 0.5rem 0.75rem 0.25rem;
+  margin: 0;
+}
+
+.search-item {
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--lego-dark);
+  transition: background 0.15s;
+}
+
+.search-item:hover {
+  background: var(--lego-bg);
+  color: var(--lego-blue);
+}
+
+.search-footer {
+  padding: 0.5rem 0.75rem;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.no-results {
+  padding: 1rem 0.75rem;
+  text-align: center;
+  color: var(--lego-gray);
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
 /* Responsive */
 @media (max-width: 640px) {
   .main-content {
@@ -641,5 +761,17 @@ form > div {
   .create-post-page,
   .profile-page {
     padding: 1.25rem;
+  }
+
+  .quick-search-container input {
+    width: 140px;
+  }
+
+  .quick-search-container input:focus {
+    width: 180px;
+  }
+
+  .search-dropdown {
+    width: 280px;
   }
 }

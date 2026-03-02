@@ -34,7 +34,15 @@ export default function UserManagement() {
         setIsAdmin(true);
 
         const { data, total: count } = await adminService.getAllUsers(page, limit);
-        setUsers(data);
+        const activity = await Promise.all(
+          data.map(u => adminService.getUserActivity(u.id))
+        );
+        const usersWithActivity = data.map((u, i) => ({
+          ...u,
+          postsCount: activity[i].postsCount,
+          commentsCount: activity[i].commentsCount,
+        }));
+        setUsers(usersWithActivity);
         setTotal(count);
         
       } catch (error) {
@@ -70,7 +78,7 @@ export default function UserManagement() {
   };
 
 
-  if (!isAdmin && loading) return <div>Checking adming priviliges...</div>;
+  if (!isAdmin && loading) return <div>Checking admin privileges...</div>;
   if (!isAdmin) return null;
 
   const totalPages = Math.ceil(total / limit);
@@ -85,6 +93,8 @@ export default function UserManagement() {
           <tr >
             <th style={{ padding: '8px' }}>User</th>
             <th style={{ padding: '8px' }}>Reputation</th>
+            <th style={{ padding: '8px' }}>Posts</th>
+            <th style={{ padding: '8px' }}>Comments</th>
             <th style={{ padding: '8px' }}>Role</th>
             <th style={{ padding: '8px' }}>Status</th>
             <th style={{ padding: '8px' }}>Actions</th>
@@ -92,12 +102,14 @@ export default function UserManagement() {
         </thead>
         <tbody>
           {loading ? (
-            <tr><td colSpan="5" style={{ padding: '20px', textAlign: 'center' }}>Loading...</td></tr>
+            <tr><td colSpan="7" style={{ padding: '20px', textAlign: 'center' }}>Loading...</td></tr>
           ) : (
             users.map(u => (
               <tr key={u.id}>
                 <td style={{ padding: '8px' }}>{u.username}</td>
                 <td style={{ padding: '8px' }}>{u.reputation}</td>
+                <td style={{ padding: '8px' }}>{u.postsCount ?? '—'}</td>
+                <td style={{ padding: '8px' }}>{u.commentsCount ?? '—'}</td>
                 <td style={{ padding: '8px', color: u.is_admin ? 'red' : 'black', fontWeight: 'bold' }}>
                   {u.is_admin ? 'Admin' : 'User'}
                 </td>
@@ -123,7 +135,7 @@ export default function UserManagement() {
           Prev
         </button>
         <span style={{ margin: '0 15px' }}>
-          Page {page + 1} от {totalPages || 1}
+          Page {page + 1} of {totalPages || 1}
         </span>
         <button onClick={() => setPage(p => p + 1)} disabled={page >= totalPages - 1 || loading}>
           Next

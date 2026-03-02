@@ -4,8 +4,9 @@ import { supabase } from '../lib/supabase';
 import { castCommentVote, removeCommentVote, getUserCommentVote } from '../services/voteService';
 import { updateComment, deleteComment } from '../services/commentService';
 
-export default function CommentNode({ comment, postId, depth = 0, refreshComments, user }) {
+export default function CommentNode({ comment, postId, depth = 0, refreshComments, user, isAdmin = false }) {
     const isAuthor = user && comment.author_id === user.id;
+    const canModify = isAuthor || isAdmin;
     const [editing, setEditing] = useState(false);
     const [editText, setEditText] = useState(comment.content);
     const [editError, setEditError] = useState(null);
@@ -168,7 +169,7 @@ export default function CommentNode({ comment, postId, depth = 0, refreshComment
                     <button onClick={() => setShowReply(!showReply)} disabled={!user}>
                         Reply
                     </button>
-                    {isAuthor && !editing && (
+                    {canModify && !editing && (
                         <>
                             <button
                                 onClick={() => setEditing(true)}
@@ -220,6 +221,7 @@ export default function CommentNode({ comment, postId, depth = 0, refreshComment
                     depth={depth + 1}
                     refreshComments={refreshComments}
                     user={user}
+                    isAdmin={isAdmin}
                 />
             ))}
         </div>

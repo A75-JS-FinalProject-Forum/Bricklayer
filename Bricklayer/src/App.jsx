@@ -12,6 +12,7 @@ import { useAuth } from './context/useAuth'
 import ProfilePage from './pages/ProfilePage'
 import PublicProfilePage from './pages/PublicProfilePage'
 import UserManagement from './pages/admin/UserManagement'
+import SearchResultPage from './pages/SearchResultPage'
 
 function AppRoutes() {
   const { user, loading } = useAuth(); 
@@ -60,6 +61,7 @@ function AppRoutes() {
         <Route path="/category/:slug" element={<CategoryPage />} />
         <Route path="/posts/:id" element={<PostDetail />} />
         <Route path="/tags/:name" element={<TagPage />} />
+        <Route path="/search" element={<SearchResultPage />} />
 
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
