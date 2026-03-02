@@ -45,7 +45,7 @@ function AppRoutes() {
       
         <Route 
           path="/search" 
-          element={<SearchResultsPage />} 
+          element={<SearchResultPage />} 
         />
 
         <Route 
