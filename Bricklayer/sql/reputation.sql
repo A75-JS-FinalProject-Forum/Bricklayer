@@ -73,10 +73,11 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- 3. Trigger: reputation_vote_trigger
---    Fires after any vote is inserted or deleted.
+--    Fires after any vote is inserted, updated, or deleted.
+--    UPDATE is needed because upsert (changing a vote) triggers UPDATE, not INSERT.
 DROP TRIGGER IF EXISTS reputation_vote_trigger ON votes;
 CREATE TRIGGER reputation_vote_trigger
-  AFTER INSERT OR DELETE ON votes
+  AFTER INSERT OR UPDATE OR DELETE ON votes
   FOR EACH ROW
   EXECUTE FUNCTION update_reputation_on_vote();
 

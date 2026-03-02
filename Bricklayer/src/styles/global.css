@@ -4,8 +4,9 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
 
-/* 1. CSS Variables */
+/* 1. CSS Variables -- Light Theme (default) */
 :root {
+  /* Brand colors (same in both themes) */
   --lego-yellow: #FFD700;
   --lego-yellow-hover: #E6C200;
   --lego-red: #E3000B;
@@ -13,6 +14,8 @@
   --lego-blue: #006CB7;
   --lego-blue-hover: #005A99;
   --lego-green: #00852B;
+
+  /* Semantic colors */
   --lego-bg: #F5F5F0;
   --lego-dark: #1A1A1A;
   --lego-gray: #6B7280;
@@ -20,6 +23,97 @@
   --lego-card: #FFFFFF;
   --lego-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   --lego-radius: 8px;
+
+  /* Text */
+  --lego-text: #1A1A1A;
+  --lego-text-secondary: #4B5563;
+  --lego-text-muted: #6B7280;
+
+  /* Surfaces */
+  --lego-bg-elevated: #FFFFFF;
+  --lego-input-bg: #FFFFFF;
+  --lego-input-border: #E5E7EB;
+  --lego-border-strong: #D1D5DB;
+  --lego-hover-bg: #F3F4F6;
+
+  /* Tags */
+  --lego-tag-bg: #E8F4FD;
+  --lego-tag-text: var(--lego-blue);
+  --lego-tag-bg-hover: #D0EAFB;
+
+  /* Badges */
+  --lego-badge-bg: #FFF8DC;
+  --lego-badge-text: #8B6914;
+
+  /* Errors */
+  --lego-error-bg: #FEE2E2;
+  --lego-error-border: #FECACA;
+  --lego-error-text: var(--lego-red);
+
+  /* Success */
+  --lego-success-text: #059669;
+
+  /* Navbar */
+  --lego-nav-bg: var(--lego-yellow);
+  --lego-nav-text: #1A1A1A;
+  --lego-nav-btn-bg: #1A1A1A;
+  --lego-nav-btn-text: var(--lego-yellow);
+  --lego-nav-hover-bg: rgba(0, 0, 0, 0.1);
+
+  /* Admin table */
+  --lego-table-bg: var(--lego-card);
+  --lego-table-border: var(--lego-border);
+  --lego-table-stripe: #F9FAFB;
+  --lego-table-hover: #F3F4F6;
+
+  /* Focus ring */
+  --lego-focus-ring: rgba(0, 108, 183, 0.15);
+}
+
+/* Dark Theme */
+[data-theme="dark"] {
+  --lego-bg: #121212;
+  --lego-dark: #E5E7EB;
+  --lego-gray: #9CA3AF;
+  --lego-border: #2D2D2D;
+  --lego-card: #1E1E1E;
+  --lego-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+  --lego-text: #E5E7EB;
+  --lego-text-secondary: #9CA3AF;
+  --lego-text-muted: #6B7280;
+
+  --lego-bg-elevated: #1E1E1E;
+  --lego-input-bg: #2A2A2A;
+  --lego-input-border: #3D3D3D;
+  --lego-border-strong: #4B4B4B;
+  --lego-hover-bg: #2A2A2A;
+
+  --lego-tag-bg: #1A2E3D;
+  --lego-tag-text: #60A5FA;
+  --lego-tag-bg-hover: #1E3A4D;
+
+  --lego-badge-bg: #2A2517;
+  --lego-badge-text: #FBBF24;
+
+  --lego-error-bg: #2D1B1B;
+  --lego-error-border: #5C2020;
+  --lego-error-text: #F87171;
+
+  --lego-success-text: #34D399;
+
+  --lego-nav-bg: #1A1A1A;
+  --lego-nav-text: var(--lego-yellow);
+  --lego-nav-btn-bg: var(--lego-yellow);
+  --lego-nav-btn-text: #1A1A1A;
+  --lego-nav-hover-bg: rgba(255, 255, 255, 0.1);
+
+  --lego-table-bg: #1E1E1E;
+  --lego-table-border: #2D2D2D;
+  --lego-table-stripe: #252525;
+  --lego-table-hover: #2A2A2A;
+
+  --lego-focus-ring: rgba(96, 165, 250, 0.2);
 }
 
 /* 2. Reset / Base */
@@ -32,9 +126,10 @@
 body {
   font-family: 'Nunito', sans-serif;
   background-color: var(--lego-bg);
-  color: var(--lego-dark);
+  color: var(--lego-text);
   line-height: 1.6;
   min-height: 100vh;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 ul, ol {
@@ -51,7 +146,7 @@ h1, h2, h3, h4 {
   font-weight: 800;
   line-height: 1.2;
   margin-bottom: 0.5em;
-  color: var(--lego-dark);
+  color: var(--lego-text);
 }
 
 h1 { font-size: 2rem; }
@@ -60,7 +155,7 @@ h3 { font-size: 1.2rem; }
 
 p {
   margin-bottom: 0.5em;
-  color: var(--lego-dark);
+  color: var(--lego-text);
 }
 
 a {
@@ -69,13 +164,21 @@ a {
   transition: color 0.2s;
 }
 
+[data-theme="dark"] a {
+  color: #60A5FA;
+}
+
+[data-theme="dark"] a:hover {
+  color: #93BBFD;
+}
+
 a:hover {
   color: var(--lego-blue-hover);
   text-decoration: underline;
 }
 
 small {
-  color: var(--lego-gray);
+  color: var(--lego-text-muted);
 }
 
 hr {
@@ -93,7 +196,7 @@ hr {
 
 /* 5. Navbar */
 .navbar {
-  background: var(--lego-yellow);
+  background: var(--lego-nav-bg);
   padding: 0.75rem 2rem;
   display: flex;
   align-items: center;
@@ -103,12 +206,32 @@ hr {
   top: 0;
   z-index: 100;
   flex-wrap: wrap;
+  transition: background-color 0.3s;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: var(--lego-nav-text);
+}
+
+.navbar-brand span {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--lego-nav-text);
+}
+
+.navbar-brand:hover {
+  text-decoration: none;
+  color: var(--lego-nav-text);
 }
 
 .navbar strong {
   font-size: 1.3rem;
   font-weight: 800;
-  color: var(--lego-dark);
+  color: var(--lego-nav-text);
 }
 
 .navbar-links {
@@ -124,7 +247,7 @@ hr {
 }
 
 .navbar a {
-  color: var(--lego-dark);
+  color: var(--lego-nav-text);
   font-weight: 700;
   padding: 0.3rem 0.6rem;
   border-radius: 4px;
@@ -132,14 +255,14 @@ hr {
 }
 
 .navbar a:hover {
-  background: rgba(0, 0, 0, 0.1);
+  background: var(--lego-nav-hover-bg);
   text-decoration: none;
-  color: var(--lego-dark);
+  color: var(--lego-nav-text);
 }
 
 .navbar button {
-  background: var(--lego-dark);
-  color: var(--lego-yellow);
+  background: var(--lego-nav-btn-bg);
+  color: var(--lego-nav-btn-text);
   border: none;
   padding: 0.4rem 1rem;
   border-radius: 4px;
@@ -147,11 +270,36 @@ hr {
   font-weight: 700;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, opacity 0.2s;
 }
 
 .navbar button:hover {
-  background: #333;
+  opacity: 0.85;
+}
+
+/* Theme toggle -- transparent icon button, same height as nav buttons */
+.theme-toggle.theme-toggle {
+  background: transparent;
+  color: var(--lego-nav-text);
+  border: 2px solid var(--lego-nav-text);
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.theme-toggle.theme-toggle:hover {
+  background: var(--lego-nav-hover-bg);
+  opacity: 1;
+}
+
+.theme-toggle svg {
+  display: block;
 }
 
 /* 6. Buttons */
@@ -185,7 +333,7 @@ button:disabled {
 
 .btn-primary {
   background: var(--lego-yellow);
-  color: var(--lego-dark);
+  color: #1A1A1A;
 }
 
 .btn-primary:hover {
@@ -201,12 +349,37 @@ button:disabled {
   background: var(--lego-red-hover);
 }
 
+.btn-edit {
+  background: #F59E0B;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  margin-right: 8px;
+}
+
+.btn-edit:hover {
+  background: #D97706;
+}
+
+.btn-delete {
+  background: var(--lego-red);
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+}
+
+.btn-delete:hover {
+  background: var(--lego-red-hover);
+}
+
 /* Generic form/page buttons (non-nav) */
 .create-post-page button[type="submit"],
 .auth-form button[type="submit"],
 .profile-page button {
   background: var(--lego-yellow);
-  color: var(--lego-dark);
+  color: #1A1A1A;
   border: 2px solid transparent;
   padding: 0.6rem 1.4rem;
   border-radius: var(--lego-radius);
@@ -223,16 +396,17 @@ button:disabled {
 input[type="text"],
 input[type="email"],
 input[type="password"],
-textarea {
+textarea,
+select {
   width: 100%;
   padding: 0.65rem 0.85rem;
-  border: 2px solid var(--lego-border);
+  border: 2px solid var(--lego-input-border);
   border-radius: var(--lego-radius);
   font-family: 'Nunito', sans-serif;
   font-size: 1rem;
-  color: var(--lego-dark);
-  background: var(--lego-card);
-  transition: border-color 0.2s;
+  color: var(--lego-text);
+  background: var(--lego-input-bg);
+  transition: border-color 0.2s, background-color 0.3s, color 0.3s;
 }
 
 textarea {
@@ -240,17 +414,18 @@ textarea {
 }
 
 input:focus,
-textarea:focus {
+textarea:focus,
+select:focus {
   outline: none;
   border-color: var(--lego-blue);
-  box-shadow: 0 0 0 3px rgba(0, 108, 183, 0.15);
+  box-shadow: 0 0 0 3px var(--lego-focus-ring);
 }
 
 label {
   display: block;
   font-weight: 700;
   margin-bottom: 0.3rem;
-  color: var(--lego-dark);
+  color: var(--lego-text);
 }
 
 form > div {
@@ -265,7 +440,7 @@ form > div {
   padding: 1.25rem;
   margin-bottom: 1rem;
   box-shadow: var(--lego-shadow);
-  transition: box-shadow 0.2s, transform 0.2s;
+  transition: box-shadow 0.2s, transform 0.2s, background-color 0.3s, border-color 0.3s;
 }
 
 .post-card:hover {
@@ -278,7 +453,7 @@ form > div {
 }
 
 .post-card h3 a {
-  color: var(--lego-dark);
+  color: var(--lego-text);
   font-weight: 800;
 }
 
@@ -287,7 +462,7 @@ form > div {
 }
 
 .post-card > p {
-  color: var(--lego-gray);
+  color: var(--lego-text-muted);
   font-size: 0.9rem;
   margin-bottom: 0.5rem;
 }
@@ -317,11 +492,16 @@ form > div {
   border-radius: 0 var(--lego-radius) var(--lego-radius) 0;
   padding: 0.85rem 1rem;
   margin-bottom: 0.5rem;
+  transition: background-color 0.3s, border-color 0.3s;
 }
 
 .comment strong {
   color: var(--lego-blue);
   font-weight: 700;
+}
+
+[data-theme="dark"] .comment strong {
+  color: #60A5FA;
 }
 
 .comment p {
@@ -337,20 +517,21 @@ form > div {
   border: 1px solid var(--lego-border);
   border-radius: 4px;
   background: var(--lego-card);
+  color: var(--lego-text);
   font-size: 0.85rem;
   margin-right: 0.3rem;
   margin-top: 0.3rem;
 }
 
 .comment button:hover {
-  background: var(--lego-bg);
+  background: var(--lego-hover-bg);
 }
 
 /* 11. Home Page Sections */
 .home-page > h1 {
   font-size: 2.2rem;
   margin-bottom: 0.5rem;
-  color: var(--lego-dark);
+  color: var(--lego-text);
 }
 
 .home-page section,
@@ -362,6 +543,7 @@ form > div {
   padding: 1.5rem;
   margin-bottom: 1.5rem;
   box-shadow: var(--lego-shadow);
+  transition: background-color 0.3s, border-color 0.3s;
 }
 
 .home-page section h2,
@@ -390,7 +572,7 @@ form > div {
 
 .home-page section ul li small {
   display: block;
-  color: var(--lego-gray);
+  color: var(--lego-text-muted);
   font-size: 0.85rem;
 }
 
@@ -410,6 +592,7 @@ form > div {
   width: 100%;
   max-width: 440px;
   box-shadow: var(--lego-shadow);
+  transition: background-color 0.3s, border-color 0.3s;
 }
 
 .auth-form h2 {
@@ -419,9 +602,9 @@ form > div {
 }
 
 .auth-form .error-message {
-  background: #FEE2E2;
-  color: var(--lego-red);
-  border: 1px solid #FECACA;
+  background: var(--lego-error-bg);
+  color: var(--lego-error-text);
+  border: 1px solid var(--lego-error-border);
   border-radius: var(--lego-radius);
   padding: 0.6rem 1rem;
   margin-bottom: 1rem;
@@ -437,7 +620,7 @@ form > div {
 .auth-form > div:last-child {
   text-align: center;
   margin-top: 1rem;
-  color: var(--lego-gray);
+  color: var(--lego-text-muted);
 }
 
 .auth-form a {
@@ -446,7 +629,7 @@ form > div {
 
 /* 13. Categories */
 .categories ul li p {
-  color: var(--lego-gray);
+  color: var(--lego-text-muted);
   font-size: 0.9rem;
   margin: 0.2rem 0 0;
 }
@@ -468,7 +651,7 @@ form > div {
 }
 
 .spotlight-user:hover {
-  background: var(--lego-bg);
+  background: var(--lego-hover-bg);
 }
 
 .spotlight-user .rank {
@@ -489,13 +672,13 @@ form > div {
   height: 40px;
   border-radius: 50%;
   border: 2px solid var(--lego-yellow);
-  background: #d1d5db;
+  background: var(--lego-hover-bg);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.1rem;
   font-weight: 700;
-  color: #4b5563;
+  color: var(--lego-text-muted);
 }
 
 .spotlight-user strong {
@@ -503,7 +686,7 @@ form > div {
 }
 
 .spotlight-user p {
-  color: var(--lego-gray);
+  color: var(--lego-text-muted);
   font-size: 0.85rem;
   margin: 0;
 }
@@ -541,8 +724,8 @@ form > div {
 /* 16. Tag Chips */
 .tag-chip {
   display: inline-block;
-  background: #E8F4FD;
-  color: var(--lego-blue);
+  background: var(--lego-tag-bg);
+  color: var(--lego-tag-text);
   border-radius: 12px;
   padding: 2px 10px;
   margin-right: 6px;
@@ -554,9 +737,9 @@ form > div {
 }
 
 .tag-chip:hover {
-  background: #D0EAFB;
+  background: var(--lego-tag-bg-hover);
   text-decoration: none;
-  color: var(--lego-blue-hover);
+  color: var(--lego-tag-text);
 }
 
 /* 17. Badge Chips */
@@ -569,8 +752,8 @@ form > div {
 
 .badge-chip {
   display: inline-block;
-  background: #FFF8DC;
-  color: #8B6914;
+  background: var(--lego-badge-bg);
+  color: var(--lego-badge-text);
   border: 1px solid var(--lego-yellow);
   border-radius: 12px;
   padding: 2px 10px;
@@ -582,7 +765,7 @@ form > div {
 
 .badge-chip:hover {
   background: var(--lego-yellow);
-  color: var(--lego-dark);
+  color: #1A1A1A;
 }
 
 /* Create Post Page */
@@ -594,6 +777,7 @@ form > div {
   max-width: 700px;
   margin: 0 auto;
   box-shadow: var(--lego-shadow);
+  transition: background-color 0.3s, border-color 0.3s;
 }
 
 .create-post-page h2 {
@@ -623,6 +807,7 @@ form > div {
   border-radius: var(--lego-radius);
   padding: 0.75rem 1rem;
   margin-bottom: 0.5rem;
+  transition: background-color 0.3s, border-color 0.3s;
 }
 
 /* Post List */
@@ -632,31 +817,264 @@ form > div {
   gap: 0;
 }
 
+/* ============================
+   VOTE CONTROLS
+   ============================ */
+.vote-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.vote-controls--sm {
+  gap: 4px;
+  margin: 4px 0;
+}
+
+.vote-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  opacity: 0.4;
+  padding: 2px 4px;
+  border-radius: 4px;
+  line-height: 1;
+  color: var(--lego-text);
+  transition: opacity 0.15s, background 0.15s;
+}
+
+.vote-btn:hover {
+  background: var(--lego-hover-bg);
+}
+
+.vote-btn--sm {
+  font-size: 12px;
+  padding: 0 2px;
+}
+
+.vote-btn--md {
+  font-size: 14px;
+  padding: 0 2px;
+}
+
+.vote-btn.active {
+  opacity: 1;
+}
+
+.vote-btn:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.vote-btn:disabled.active {
+  opacity: 1;
+}
+
+.vote-score {
+  font-weight: bold;
+  font-size: 18px;
+  min-width: 24px;
+  text-align: center;
+}
+
+.vote-score--sm {
+  font-size: inherit;
+  min-width: auto;
+}
+
+.vote-score--md {
+  font-size: inherit;
+  min-width: 16px;
+}
+
+/* ============================
+   SORT CONTROLS
+   ============================ */
+.sort-controls {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+
+.sort-btn {
+  padding: 6px 14px;
+  border: 1px solid var(--lego-border-strong);
+  border-radius: 4px;
+  background: var(--lego-card);
+  color: var(--lego-text);
+  cursor: pointer;
+  font-weight: normal;
+  transition: background 0.2s, color 0.2s;
+}
+
+.sort-btn:hover {
+  background: var(--lego-hover-bg);
+}
+
+.sort-btn.active {
+  background: var(--lego-nav-btn-bg);
+  color: var(--lego-nav-btn-text);
+  font-weight: bold;
+  border-color: var(--lego-nav-btn-bg);
+}
+
+/* ============================
+   ADMIN TABLE
+   ============================ */
+.admin-table {
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+  background: var(--lego-table-bg);
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 8px;
+  border: 1px solid var(--lego-table-border);
+}
+
+.admin-table th {
+  background: var(--lego-hover-bg);
+  font-weight: 700;
+}
+
+.admin-table tbody tr:nth-child(even) {
+  background: var(--lego-table-stripe);
+}
+
+.admin-table tbody tr:hover {
+  background: var(--lego-table-hover);
+}
+
+.status-admin {
+  color: var(--lego-red);
+  font-weight: bold;
+}
+
+.status-active {
+  color: var(--lego-green);
+  font-weight: bold;
+}
+
+.status-blocked {
+  color: var(--lego-red);
+  font-weight: bold;
+}
+
+/* ============================
+   INLINE STYLE REPLACEMENTS
+   ============================ */
+
+/* Error text for inline errors */
+.error-inline {
+  color: var(--lego-error-text);
+  margin-top: 8px;
+}
+
+/* Success text */
+.success-inline {
+  color: var(--lego-success-text);
+  margin-top: 8px;
+}
+
+/* Form section spacing */
+.form-section {
+  margin-top: 12px;
+}
+
+/* Tag row flex */
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+/* Tag remove button (the X inside tag chips) */
+.tag-remove-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 4px;
+  padding: 0;
+  font-size: 0.85rem;
+  line-height: 1;
+  color: inherit;
+}
+
+/* Author links that should inherit color */
+.author-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.author-link:hover {
+  text-decoration: underline;
+  color: inherit;
+}
+
+/* Pagination */
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Post action buttons container */
+.post-actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+/* Tags display row (marginBottom in post cards) */
+.tags-display {
+  margin-bottom: 8px;
+}
+
+/* Comment meta spacing */
+.comment-actions-gap {
+  margin-left: 8px;
+}
+
+.comment-delete-btn {
+  margin-left: 4px;
+  color: var(--lego-error-text);
+}
+
+.comment-reply-section {
+  margin-top: 8px;
+}
+
+/* Search result post spacing */
+.search-result-item {
+  margin-bottom: 15px;
+}
+
 /* 17. Utility */
 .error-text {
-  color: var(--lego-red);
+  color: var(--lego-error-text);
   font-weight: 600;
 }
 
 .loading-text {
-  color: var(--lego-gray);
+  color: var(--lego-text-muted);
   font-style: italic;
   padding: 2rem;
   text-align: center;
 }
 
-/* Vote buttons in post-card and post-detail (override inline styles that set background:none) */
-.post-card button,
-.vote-controls button {
+/* Vote buttons in post-card (override base comment button styles) */
+.post-card .vote-btn,
+.vote-controls .vote-btn {
   border: none;
   background: none;
-  padding: 2px 4px;
-  border-radius: 4px;
-}
-
-.post-card button:hover,
-.vote-controls button:hover {
-  background: var(--lego-bg);
+  margin: 0;
 }
 
 /* 18. QuickSearch Dropdown */
@@ -672,15 +1090,20 @@ form > div {
   font-family: 'Nunito', sans-serif;
   font-size: 0.85rem;
   background: rgba(255, 255, 255, 0.85);
-  color: var(--lego-dark);
+  color: var(--lego-text);
   transition: border-color 0.2s, width 0.2s;
+}
+
+[data-theme="dark"] .quick-search-container input {
+  background: rgba(42, 42, 42, 0.85);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .quick-search-container input:focus {
   width: 240px;
   border-color: var(--lego-blue);
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(0, 108, 183, 0.15);
+  background: var(--lego-input-bg);
+  box-shadow: 0 0 0 3px var(--lego-focus-ring);
 }
 
 .search-dropdown {
@@ -706,7 +1129,7 @@ form > div {
   font-size: 0.75rem;
   font-weight: 800;
   text-transform: uppercase;
-  color: var(--lego-gray);
+  color: var(--lego-text-muted);
   padding: 0.5rem 0.75rem 0.25rem;
   margin: 0;
 }
@@ -716,12 +1139,12 @@ form > div {
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--lego-dark);
+  color: var(--lego-text);
   transition: background 0.15s;
 }
 
 .search-item:hover {
-  background: var(--lego-bg);
+  background: var(--lego-hover-bg);
   color: var(--lego-blue);
 }
 
@@ -734,9 +1157,39 @@ form > div {
 .no-results {
   padding: 1rem 0.75rem;
   text-align: center;
-  color: var(--lego-gray);
+  color: var(--lego-text-muted);
   font-size: 0.9rem;
   font-style: italic;
+}
+
+/* ============================
+   DARK MODE EXTRAS
+   ============================ */
+
+/* Scrollbar */
+[data-theme="dark"] ::-webkit-scrollbar {
+  width: 8px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: #1A1A1A;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #4B4B4B;
+  border-radius: 4px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
+
+/* Loading state */
+.loading-spinner {
+  color: var(--lego-text-muted);
+  font-style: italic;
+  padding: 2rem;
+  text-align: center;
 }
 
 /* Responsive */
@@ -773,5 +1226,9 @@ form > div {
 
   .search-dropdown {
     width: 280px;
+  }
+
+  .sort-controls {
+    flex-wrap: wrap;
   }
 }

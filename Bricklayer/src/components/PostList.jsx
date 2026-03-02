@@ -48,31 +48,23 @@ export default function PostList() {
     }, [sortBy, categoryId])
 
     if (loading) {
-        return <div>Loading posts...</div>
+        return <div className="loading-text">Loading posts...</div>
     }
 
     if (error) {
-        return <div style={{ color: 'red' }}>{error}</div>;
+        return <div className="error-inline">{error}</div>;
     }
     if (posts.length === 0) {
         return <div>No posts found.</div>;
     }
     return (
         <div className="post-list">
-            <div className="sort-controls" style={{ display: 'flex', gap: 8, marginBottom: 16, alignItems: 'center' }}>
+            <div className="sort-controls">
                 {SORT_OPTIONS.map(opt => (
                     <button
                         key={opt.value}
                         onClick={() => setSortBy(opt.value)}
-                        style={{
-                            padding: '6px 14px',
-                            border: '1px solid #ccc',
-                            borderRadius: 4,
-                            background: sortBy === opt.value ? '#333' : '#fff',
-                            color: sortBy === opt.value ? '#fff' : '#333',
-                            cursor: 'pointer',
-                            fontWeight: sortBy === opt.value ? 'bold' : 'normal',
-                        }}
+                        className={`sort-btn${sortBy === opt.value ? ' active' : ''}`}
                     >
                         {opt.label}
                     </button>
@@ -80,12 +72,6 @@ export default function PostList() {
                 <select
                     value={categoryId || ''}
                     onChange={e => setCategoryId(e.target.value || null)}
-                    style={{
-                        padding: '6px 10px',
-                        border: '1px solid #ccc',
-                        borderRadius: 4,
-                        cursor: 'pointer',
-                    }}
                 >
                     <option value="">All Categories</option>
                     {categories.map(cat => (

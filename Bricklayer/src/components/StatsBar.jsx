@@ -31,7 +31,7 @@ export default function StatsBar() {
     return (
         <section>
             <h3>Statistics</h3>
-            {error && <div style={{ color: 'red' }}>{error}</div>}
+            {error && <div className="error-inline">{error}</div>}
             <ul>
                 <li>Total Users: {users !== null ? users : '...'}</li>
                 <li>Total Posts: {posts !== null ? posts : '...'}</li>

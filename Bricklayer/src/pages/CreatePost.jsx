@@ -88,7 +88,7 @@ export default function CreatePost() {
         }
       }
 
-      toast.success("Тухличката е поставена успешно! 🧱");
+      toast.success("Post created successfully!");
       navigate('/');
     } catch (err) {
       setError(err.message || 'Failed to create post.');
@@ -110,51 +110,39 @@ export default function CreatePost() {
             value={title}
             onChange={e => setTitle(e.target.value)}
             required
-            style={{ width: '100%', padding: 8 }}
           />
         </div>
-        <div style={{ marginTop: 16 }}>
+        <div className="form-section">
           <label>Content</label><br />
           <textarea
             value={content}
             onChange={e => setContent(e.target.value)}
             required
             rows={6}
-            style={{ width: '100%', padding: 8 }}
           />
         </div>
-        <div style={{ marginTop: 16 }}>
+        <div className="form-section">
           <label>Category: </label><br />
           <select
             value={selectedCategory}
             onChange={e => setSelectedCategory(e.target.value)}
             required
-            style={{ width: '100%', padding: 8 }}
           >
             {categories.map(c => (
               <option key={c.id} value={c.id}>{c.name}</option>
             ))}
           </select>
         </div>
-        <div style={{ marginTop: 16 }}>
+        <div className="form-section">
           <label>Tags (up to 5)</label><br />
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
+          <div className="tag-row">
             {selectedTags.map(tag => (
               <span key={tag} className="tag-chip" style={{ cursor: 'default' }}>
                 {tag}
                 <button
                   type="button"
                   onClick={() => handleRemoveTag(tag)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    marginLeft: 4,
-                    padding: 0,
-                    fontSize: '0.85rem',
-                    lineHeight: 1,
-                    color: 'inherit'
-                  }}
+                  className="tag-remove-btn"
                 >
                   ✕
                 </button>
@@ -168,11 +156,10 @@ export default function CreatePost() {
             onKeyDown={handleTagKeyDown}
             placeholder={selectedTags.length >= 5 ? 'Max 5 tags' : 'Type a tag and press Enter'}
             disabled={selectedTags.length >= 5}
-            style={{ width: '100%', padding: 8 }}
           />
         </div>
-        {error && <div style={{ color: 'red', marginTop: 8 }}>{error}</div>}
-        <button type="submit" disabled={loading} style={{ marginTop: 16 }}>
+        {error && <div className="error-inline">{error}</div>}
+        <button type="submit" disabled={loading} className="form-section">
           {loading ? 'Creating...' : 'Create Post'}
         </button>
       </form>

@@ -126,7 +126,7 @@ export default function ProfilePage() {
         
         <div className="profile-info">
           <h2>{profile.username}</h2>
-          <p>Registered on: {new Date(profile.created_at).toLocaleDateString()}</p>
+          <p>Registered on: {new Date(profile.created_at).toISOString().slice(0, 10)}</p>
           <p className="reputation">Reputation: {profile.reputation} </p>
           {badges.length > 0 && (
             <div className="badges-row">

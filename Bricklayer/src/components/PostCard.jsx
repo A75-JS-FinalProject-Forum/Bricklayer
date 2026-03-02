@@ -40,66 +40,43 @@ export default function PostCard({ post, user }) {
                 </Link>
             </h3>
             <p>
-                by {post.profiles?.username ? <Link to={`/profile/${post.profiles.username}`} style={{ color: 'inherit' }}>{post.profiles.username}</Link> : 'Unknown author'}
+                by {post.profiles?.username ? <Link to={`/profile/${post.profiles.username}`} className="author-link">{post.profiles.username}</Link> : 'Unknown author'}
                 {post.categories && (
                     <> in {post.categories.name}</>
                 )}
             </p>
             {post.tags && post.tags.length > 0 && (
-                <div style={{ marginBottom: 4 }}>
+                <div className="tags-display">
                     {post.tags.map(tag => (
                         <Link
                             key={tag.id}
                             to={`/tags/${tag.name}`}
-                            style={{
-                                display: 'inline-block',
-                                background: '#e0e0e0',
-                                borderRadius: 12,
-                                padding: '1px 8px',
-                                marginRight: 4,
-                                fontSize: 12,
-                                textDecoration: 'none',
-                                color: '#333'
-                            }}
+                            className="tag-chip"
                         >
                             {tag.name}
                         </Link>
                     ))}
                 </div>
             )}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <div className="vote-controls--sm" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                 <button
                     onClick={(e) => handleVote(e, 1)}
                     disabled={!user}
-                    style={{
-                        background: 'none',
-                        border: 'none',
-                        cursor: user ? 'pointer' : 'default',
-                        fontSize: 14,
-                        opacity: userVote === 1 ? 1 : 0.4,
-                        padding: '0 2px'
-                    }}
+                    className={`vote-btn vote-btn--md${userVote === 1 ? ' active' : ''}`}
                 >
                     ▲
                 </button>
-                <span style={{ fontWeight: 'bold', minWidth: 16, textAlign: 'center' }}>
+                <span className="vote-score--md">
                     {displayScore}
                 </span>
                 <button
                     onClick={(e) => handleVote(e, -1)}
                     disabled={!user}
-                    style={{
-                        background: 'none',
-                        border: 'none',
-                        cursor: user ? 'pointer' : 'default',
-                        fontSize: 14,
-                        opacity: userVote === -1 ? 1 : 0.4,
-                        padding: '0 2px'
-                    }}
+                    className={`vote-btn vote-btn--md${userVote === -1 ? ' active' : ''}`}
                 >
                     ▼
                 </button>
-                <span style={{ marginLeft: 8 }}>| 💬 {post.comments_count}</span>
+                <span style={{ marginLeft: 8 }}>| {post.comments_count} comments</span>
             </div>
         </div>
     );

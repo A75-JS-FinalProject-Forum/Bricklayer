@@ -66,12 +66,12 @@ export default function PublicProfilePage() {
         <div className="public-info">
           <h2 className="public-username">@{profile.username}</h2>
           
-          <div className="badge-container">
-            <span className="badge reputation-badge">
-              Reputation: {profile.reputation || 0} 
+          <div className="badge-container-vertical">
+            <span className="public-badge reputation-text">
+              Reputation: {profile.reputation || 0}
             </span>
-            <span className="badge date-badge">
-              Member from: {new Date(profile.created_at).toLocaleDateString()}
+            <span className="public-badge date-text">
+              Member from: {new Date(profile.created_at).toISOString().slice(0, 10)}
             </span>
           </div>
 

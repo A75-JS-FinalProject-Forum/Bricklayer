@@ -30,8 +30,8 @@ export default function SearchResultsPage() {
     }, [query]);
 
     if (!query) return <div>Enter query for search.</div>;
-    if (loading) return <div>Search for "{query}"...</div>;
-    if (error) return <div>{error}</div>;
+    if (loading) return <div className="loading-text">Search for "{query}"...</div>;
+    if (error) return <div className="error-inline">{error}</div>;
 
     const hasResults = results.posts.length > 0 || results.users.length > 0 || results.tags.length > 0;
 
@@ -79,7 +79,7 @@ export default function SearchResultsPage() {
                     <h3>Publications</h3>
                     <div>
                         {results.posts.map(post => (
-                            <div key={post.id} style={{ marginBottom: '15px' }}>
+                            <div key={post.id} className="search-result-item">
                                 <h4>
                                     <Link to={`/posts/${post.id}`}>
                                         {post.title}

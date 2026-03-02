@@ -17,7 +17,7 @@ function HomePage() {
       {user && (
         <button
           className="btn btn-primary"
-          style={{ marginBottom: 20 }}
+          style={{ marginBottom: '1.25rem' }}
           onClick={() => navigate('/create')}
         >
           Create Post
